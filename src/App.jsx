@@ -329,7 +329,12 @@ export default function App() {
 
       {currentScreen === 'screen_aichat' && (
         <ScreenAIChat 
+          user={user}
           onBackToHome={handleBackToHome}
+          onNavigateBooking={() => setCurrentScreen('screen_datlich')}
+          onNavigateProducts={() => setCurrentScreen('screen_sanpham')}
+          onNavigateHoSoDa={() => setCurrentScreen('screen_hosoda')}
+          onNavigateBangGia={() => setCurrentScreen('screen_banggia')}
         />
       )}
 

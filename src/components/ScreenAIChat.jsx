@@ -1,308 +1,450 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Home, Send, RotateCcw } from 'lucide-react';
-import HasakiLogo from './HasakiLogo';
+import { ArrowLeft, Home, Send, RotateCcw, Sparkles, HelpCircle, X, ChevronRight } from 'lucide-react';
+import { getInitialProactiveGreeting, generateMaiHaReply } from '../utils/maiHaChatEngine';
 
-export default function ScreenAIChat({ onBackToHome }) {
-  // 4 Preset questions and exact answers from reference images
+// Lightweight inline markdown formatter for **bold** and *italic*
+function renderFormattedText(text) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return lines.map((line, lineIdx) => {
+    const tokens = [];
+    let remaining = line;
+    let keyIdx = 0;
+
+    while (remaining.length > 0) {
+      const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+      const italicMatch = remaining.match(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/);
+
+      let nextMatch = null;
+      let matchType = null;
+
+      if (boldMatch && italicMatch) {
+        if (boldMatch.index <= italicMatch.index) {
+          nextMatch = boldMatch;
+          matchType = 'bold';
+        } else {
+          nextMatch = italicMatch;
+          matchType = 'italic';
+        }
+      } else if (boldMatch) {
+        nextMatch = boldMatch;
+        matchType = 'bold';
+      } else if (italicMatch) {
+        nextMatch = italicMatch;
+        matchType = 'italic';
+      }
+
+      if (!nextMatch) {
+        tokens.push(<React.Fragment key={keyIdx++}>{remaining}</React.Fragment>);
+        break;
+      }
+
+      if (nextMatch.index > 0) {
+        tokens.push(
+          <React.Fragment key={keyIdx++}>
+            {remaining.slice(0, nextMatch.index)}
+          </React.Fragment>
+        );
+      }
+
+      if (matchType === 'bold') {
+        tokens.push(
+          <strong key={keyIdx++} className="font-bold text-[#0f4730]">
+            {nextMatch[1]}
+          </strong>
+        );
+      } else {
+        tokens.push(
+          <em key={keyIdx++} className="italic text-slate-700">
+            {nextMatch[1]}
+          </em>
+        );
+      }
+
+      remaining = remaining.slice(nextMatch.index + nextMatch[0].length);
+    }
+
+    return (
+      <React.Fragment key={lineIdx}>
+        {tokens}
+        {lineIdx < lines.length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
+}
+
+export default function ScreenAIChat({
+  user = { name: 'Nguyễn Văn A', gender: 'Nam' },
+  onBackToHome,
+  onNavigateBooking,
+  onNavigateProducts,
+  onNavigateHoSoDa,
+  onNavigateBangGia
+}) {
+  // 4 Preset detailed FAQ questions (accessible via FAQ modal)
   const presetQuestions = [
     {
       id: 1,
       question: 'Dựa trên tình trạng da hiện tại, tôi nên ưu tiên cải thiện vấn đề nào trước và xây dựng routine chăm sóc da như thế nào?',
-      answer: `Chào bạn! 🌿 Để xây dựng routine phù hợp, chúng ta nên ưu tiên củng cố hàng rào bảo vệ da và giải quyết những vấn đề đang ảnh hưởng nhiều nhất đến làn da của bạn.
-HASAKI gợi ý 3 bước bắt đầu:
-1. Làm sạch: Sử dụng sản phẩm làm sạch phù hợp với loại da, tránh khiến da bị khô căng.
-2. Dưỡng ẩm: Duy trì độ ẩm và hỗ trợ hàng rào bảo vệ da.
-3. Chống nắng: Sử dụng kem chống nắng phổ rộng SPF 30 trở lên vào ban ngày.
-Sau khi xác định được vấn đề ưu tiên như mụn, thâm, da khô hoặc không đều màu, bạn có thể bổ sung sản phẩm đặc trị phù hợp. Hãy bắt đầu từ từ để theo dõi phản ứng của da nhé!
-Để HASAKI tư vấn sát hơn, bạn cho mình biết:
-• Loại da của bạn là da dầu, da khô, da hỗn hợp hay chưa xác định?
-• Bạn muốn cải thiện vấn đề nào nhất hiện nay?
-💚 Bạn cũng có thể xem lại kết quả trong mục Hồ sơ da của tôi để nhận gợi ý phù hợp hơn.`
+      answer: `Chào bạn! 🌿 Để xây dựng routine phù hợp, Mai Hà khuyên chúng ta nên ưu tiên củng cố hàng rào bảo vệ da và giải quyết những vấn đề đang ảnh hưởng nhiều nhất đến làn da của bạn.\n\n**3 bước nền tảng để bắt đầu:**\n1. **Làm sạch:** Sử dụng sản phẩm làm sạch dịu nhẹ phù hợp với loại da, tránh khiến da bị khô căng.\n2. **Dưỡng ẩm:** Duy trì độ ẩm và hỗ trợ hàng rào bảo vệ da.\n3. **Chống nắng:** Sử dụng kem chống nắng phổ rộng SPF 30 trở lên vào ban ngày.\n\nSau đó bạn mới bổ sung sản phẩm đặc trị cho mụn, thâm hay khô da nhé. Hiện tại loại da của bạn là da dầu, da khô, hỗn hợp hay nhạy cảm vậy ạ? Kể Mai Hà nghe để mình lên routine cụ thể cho bạn nha!`
     },
     {
       id: 2,
       question: 'Tôi đang sử dụng nhiều sản phẩm chăm sóc da khác nhau. Làm thế nào để biết các thành phần có phù hợp với nhau và tránh gây kích ứng?',
-      answer: `Mình có thể giúp bạn kiểm tra các thành phần trong routine hiện tại! 🧴
-Một số thành phần cần được cân nhắc khi sử dụng chung, đặc biệt nếu bạn có làn da nhạy cảm:
-• Retinol và AHA/BHA: Kết hợp không phù hợp hoặc dùng với tần suất quá cao có thể làm tăng nguy cơ khô, đỏ và kích ứng.
-• Benzoyl peroxide và retinoid: Khả năng tương thích phụ thuộc vào từng hoạt chất và công thức sản phẩm. Một số dạng retinoid có thể bị ảnh hưởng khi dùng đồng thời.
-• Nhiều sản phẩm tẩy tế bào chết: Có thể khiến hàng rào bảo vệ da bị tổn thương nếu sử dụng quá mức.
-Không phải mọi cặp thành phần trên đều bị cấm kết hợp. Điều quan trọng là nồng độ, công thức, cách sử dụng và khả năng dung nạp của da.
-Để kiểm tra chính xác hơn, bạn hãy gửi cho mình:
-1. Tên các sản phẩm đang sử dụng.
-2. Thứ tự và tần suất sử dụng.
-3. Tình trạng da hiện tại, chẳng hạn như khô, đỏ, châm chích hoặc nổi mụn.
-HASAKI sẽ giúp bạn rà soát các thành phần đáng lưu ý và gợi ý cách sắp xếp routine an toàn hơn.
-Lưu ý: Nếu da đang kích ứng rõ rệt, bạn nên ngừng các sản phẩm nghi ngờ gây kích ứng và tham khảo bác sĩ da liễu khi cần.`
+      answer: `Mai Hà rất sẵn lòng kiểm tra bảng thành phần giúp bạn nhé! 🧴\n\nMột số cặp hoạt chất cần cẩn trọng khi dùng chung, đặc biệt với da nhạy cảm:\n• **Retinol & AHA/BHA:** Dùng chung cùng một buổi dễ gây khô rát, bong tróc. Nên tách ra dùng cách ngày.\n• **Benzoyl Peroxide & Retinoid:** Có thể làm giảm hiệu quả hoặc gây kích ứng nếu bôi chồng lên nhau.\n• **Quá nhiều bước tẩy tế bào chết:** Dễ làm mỏng yếu hàng rào bảo vệ da.\n\nBạn cứ nhắn cho Mai Hà **tên các sản phẩm bạn đang dùng** cùng **thứ tự sáng/tối**, mình rà soát chi tiết giúp bạn ngay ạ!`
     },
     {
       id: 3,
       question: 'Dựa trên hồ sơ da và mục tiêu chăm sóc của tôi, những dịch vụ nào tại Hasaki Clinic phù hợp để cân nhắc, và tôi cần lưu ý gì trước khi đặt lịch?',
-      answer: `Chào bạn! 💚 Việc lựa chọn dịch vụ phù hợp nên dựa trên tình trạng da thực tế, mục tiêu chăm sóc và mức độ nhạy cảm của làn da.
-Bạn có thể tham khảo định hướng sau:
-• Da dầu, dễ nổi mụn: Cân nhắc tư vấn chăm sóc da và đánh giá tình trạng mụn trước khi lựa chọn dịch vụ.
-• Da khô, thiếu ẩm: Tìm hiểu các dịch vụ chăm sóc và dưỡng ẩm phù hợp.
-• Da không đều màu, có thâm: Nên được đánh giá nguyên nhân trước khi lựa chọn phương pháp chăm sóc chuyên biệt.
-• Da nhạy cảm, dễ kích ứng: Ưu tiên đánh giá hàng rào bảo vệ da và xác định các yếu tố có thể gây kích ứng.
-Để đưa ra gợi ý phù hợp hơn, mình cần biết thêm về tình trạng da và mục tiêu của bạn.
-Bạn có thể mở mục Hồ sơ da của tôi để xem thông tin đã lưu, sau đó chọn Đặt lịch tư vấn để tìm hiểu dịch vụ tại Hasaki Clinic.
-Mình cũng khuyên bạn nên trao đổi với chuyên viên về các sản phẩm đang sử dụng, tiền sử kích ứng và những lưu ý trước khi thực hiện dịch vụ nhé!
-Lưu ý: Đây là định hướng tham khảo, không thay thế việc thăm khám hoặc chẩn đoán của bác sĩ. Dịch vụ cụ thể cần được lựa chọn dựa trên đánh giá chuyên môn và danh mục thực tế tại Hasaki Clinic.`
+      answer: `Dạ về dịch vụ tại Hasaki Clinic, việc chọn liệu trình sẽ dựa trên tình trạng da thực tế của bạn nhé! 💚\n\n• **Da dầu, mụn ẩn/mụn viêm:** Cân nhắc Combo Lấy nhân mụn + mặt nạ + chiếu đèn (249.000₫) hoặc Peel BHA 20% (350.000₫).\n• **Da khô, thiếu ẩm / mới treatment:** Điện di lạnh phục hồi (500.000₫) rất êm và cấp ẩm sâu.\n• **Da thâm nám, không đều màu:** Thăm khám cùng Bác sĩ Da liễu để được chỉ định Laser Revlite phù hợp.\n\nTrước khi qua Clinic, bạn nhớ ngưng các sản phẩm tẩy da chết mạnh/Retinol trước 3–5 ngày và mang theo danh sách sản phẩm đang dùng để chuyên viên tư vấn chuẩn nhất nha!`
     },
     {
       id: 4,
       question: 'Tôi đã thực hiện chăm sóc da một thời gian nhưng chưa thấy cải thiện rõ rệt. Làm thế nào để đánh giá hiệu quả routine hiện tại và điều chỉnh lộ trình phù hợp hơn?',
-      answer: `Mình hiểu cảm giác chưa thấy kết quả rõ rệt dù đã chăm sóc da đều đặn! 🌱 Tuy nhiên, điều này không nhất thiết có nghĩa là sản phẩm bạn đang dùng không hiệu quả.
-Có 4 yếu tố bạn nên kiểm tra:
-1. Thời gian sử dụng
-Một số vấn đề da cần nhiều tuần đến vài tháng để cải thiện. Thời gian phụ thuộc vào tình trạng da và hoạt chất đang sử dụng.
-2. Mức độ phù hợp của sản phẩm
-Sản phẩm có thể chưa phù hợp với loại da, mục tiêu chăm sóc hoặc khả năng dung nạp của bạn.
-3. Tần suất sử dụng
-Sử dụng hoạt chất quá thường xuyên có thể gây kích ứng; ngược lại, sử dụng không đều đặn có thể khiến việc đánh giá hiệu quả khó khăn hơn.
-4. Thói quen chăm sóc da
-Làm sạch dịu nhẹ, dưỡng ẩm và chống nắng đều đặn là nền tảng quan trọng của routine.
-HASAKI gợi ý bạn thực hiện 3 bước:
-• Ghi lại các sản phẩm và thời gian đã sử dụng.
-• Theo dõi những thay đổi của da bằng hình ảnh trong điều kiện ánh sáng tương tự.
-• Điều chỉnh từng yếu tố một thay vì thay đổi toàn bộ routine cùng lúc.
-Để mình hỗ trợ cụ thể hơn, bạn hãy chia sẻ:
-• Bạn đang muốn cải thiện vấn đề da nào?
-• Bạn đã sử dụng routine hiện tại bao lâu?
-• Da có xuất hiện dấu hiệu khô, đỏ hoặc kích ứng không?`
+      answer: `Mai Hà hiểu cảm giác chăm chỉ dưỡng da mãi mà chưa thấy kết quả rõ rệt là sốt ruột lắm đúng không ạ! 🌱 Tuy nhiên điều này không hẳn là sản phẩm bị "vô tác dụng" đâu nha.\n\nBạn thử kiểm tra 4 yếu tố sau cùng mình nhé:\n1. **Thời gian sử dụng:** Chu kỳ tái tạo da thường mất 4–8 tuần mới thấy rõ thay đổi.\n2. **Độ hợp với loại da:** Sản phẩm dưỡng quá dày với da dầu hoặc thiếu ẩm với da khô đều làm giảm hiệu quả.\n3. **Tần suất & Liều lượng:** Quá ít (nhất là kem chống nắng) hoặc quá dày đặc đều ảnh hưởng.\n4. **Lối sống:** Thức khuya, stress hoặc chưa tẩy trang kỹ vào cuối ngày.\n\nBạn đang dùng routine hiện tại được bao lâu rồi? Nhắn Mai Hà xem thử để mình điều chỉnh nhẹ lại giúp bạn nha!`
     }
   ];
 
-  // Chat message list: if empty, display Hình 1 (4 preset cards)
   const [messages, setMessages] = useState([]);
+  const [quickReplies, setQuickReplies] = useState([]);
+  const [chatContext, setChatContext] = useState({
+    skinType: null,
+    concerns: [],
+    mentionedProducts: [],
+    turnCount: 0
+  });
   const [inputText, setInputText] = useState('');
-  const [isBotTyping, setIsBotTyping] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(true);
+  const [showFaqModal, setShowFaqModal] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isBotTyping]);
-
-  // When user clicks a preset question (Hình 1 -> Hình 2/3/4/5)
-  const handleSelectPreset = (preset) => {
-    const userMsg = {
-      id: Date.now(),
-      sender: 'user',
-      text: preset.question
-    };
-
-    setMessages(prev => [...prev, userMsg]);
+  // Trigger Mai Hà's proactive skin-condition greeting as soon as user enters the chatbot
+  const startProactiveConversation = () => {
+    setMessages([]);
+    setQuickReplies([]);
+    setChatContext({
+      skinType: null,
+      concerns: [],
+      mentionedProducts: [],
+      turnCount: 0
+    });
     setIsBotTyping(true);
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      const { message, quickReplies: initialChips } = getInitialProactiveGreeting(user);
       setIsBotTyping(false);
-      const botMsg = {
-        id: Date.now() + 1,
-        sender: 'bot',
-        text: preset.answer
-      };
-      setMessages(prev => [...prev, botMsg]);
-    }, 350);
+      setMessages([
+        {
+          id: Date.now(),
+          sender: 'bot',
+          text: message,
+          timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+      setQuickReplies(initialChips);
+    }, 450);
+
+    return timer;
   };
 
-  // When user types custom question
-  const handleSendMessage = (e) => {
-    if (e) e.preventDefault();
-    const query = inputText.trim();
-    if (!query) return;
+  useEffect(() => {
+    const timer = startProactiveConversation();
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isBotTyping, quickReplies]);
+
+  const handleActionClick = (target) => {
+    if (target === 'booking' && onNavigateBooking) onNavigateBooking();
+    else if (target === 'products' && onNavigateProducts) onNavigateProducts();
+    else if (target === 'hosoda' && onNavigateHoSoDa) onNavigateHoSoDa();
+    else if (target === 'banggia' && onNavigateBangGia) onNavigateBangGia();
+  };
+
+  const processUserMessage = (textToSend) => {
+    const query = textToSend.trim();
+    if (!query || isBotTyping) return;
+
+    const nowTime = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     const userMsg = {
       id: Date.now(),
       sender: 'user',
-      text: query
+      text: query,
+      timestamp: nowTime
     };
 
     setMessages(prev => [...prev, userMsg]);
+    setQuickReplies([]);
     setInputText('');
     setIsBotTyping(true);
 
+    const delay = 450 + Math.min(query.length * 4, 300);
     setTimeout(() => {
+      const result = generateMaiHaReply(query, chatContext, user, presetQuestions);
+      setChatContext(result.updatedContext);
       setIsBotTyping(false);
-      // Check if it matches one of the preset questions
-      const matched = presetQuestions.find(p => 
-        query.toLowerCase().includes(p.question.substring(0, 20).toLowerCase())
-      );
-
-      let reply = "";
-      if (matched) {
-        reply = matched.answer;
-      } else if (query.toLowerCase().includes('mụn') || query.toLowerCase().includes('acne')) {
-        reply = `Chào bạn! 🌿 Đối với tình trạng da mụn, Hasaki khuyên bạn:
-1. Làm sạch dịu nhẹ với sữa rửa mặt có BHA (Salicylic Acid 1-2%).
-2. Chấm mụn với Benzoyl Peroxide hoặc Tea Tree Oil.
-3. Luôn thoa kem chống nắng không dầu (oil-free) để tránh thâm mụn.
-Bạn có thể đặt lịch soi da miễn phí tại Hasaki Clinic & Spa để bác sĩ lên phác đồ chuẩn y khoa nhé!`;
-      } else if (query.toLowerCase().includes('nắng') || query.toLowerCase().includes('kcn')) {
-        reply = `HASAKI gợi ý bạn chọn kem chống nắng quang phổ rộng SPF 50+, PA++++:
-• Da dầu mụn: La Roche-Posay Anthelios Oil Control, Anessa Perfect UV Milk.
-• Da khô/nhạy cảm: Skin1004 Madagascar Centella, Eucerin Sun Gel-Cream.
-Hãy thoa trước khi ra ngoài 20 phút và thoa lại sau mỗi 3-4 giờ!`;
-      } else {
-        reply = `Cảm ơn câu hỏi của bạn về "${query}"! 🌿
-Chuyên viên Hasaki Skin Journey ghi nhận và khuyên bạn nên duy trì 3 bước cơ bản: Làm sạch dịu nhẹ, Cấp ẩm phục hồi và Chống nắng đầy đủ. Bạn cũng có thể ghé bất kỳ chi nhánh Hasaki Clinic & Spa nào để được bác sĩ thăm khám trực tiếp miễn phí nhé!`;
-      }
 
       const botMsg = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: reply
+        text: result.reply,
+        actionLink: result.actionLink || null,
+        timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
       };
+
       setMessages(prev => [...prev, botMsg]);
-    }, 450);
+      setQuickReplies(result.quickReplies || []);
+    }, delay);
+  };
+
+  const handleSendMessage = (e) => {
+    if (e) e.preventDefault();
+    processUserMessage(inputText);
+  };
+
+  const handleSelectPreset = (preset) => {
+    setShowFaqModal(false);
+    processUserMessage(preset.question);
   };
 
   const handleResetChat = () => {
-    setMessages([]);
+    startProactiveConversation();
   };
 
   return (
     <div className="relative w-full h-full min-h-[680px] flex flex-col justify-between bg-[#f2f6f3] select-none text-slate-800">
       
-      {/* Top Header matching all 5 images */}
-      <div className="px-5 pt-3 pb-2 flex-shrink-0 bg-[#f2f6f3]">
-        <div className="flex items-center justify-between pb-2">
+      {/* Top Header */}
+      <div className="px-4 pt-3 pb-2.5 flex-shrink-0 bg-white/95 backdrop-blur-xs border-b border-emerald-900/[0.08] shadow-xs z-10">
+        <div className="flex items-center justify-between mb-2">
           <button
             onClick={onBackToHome}
-            className="flex items-center gap-2.5 text-[#124c34] font-bold text-[17px] hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center gap-2 text-[#124c34] font-bold text-[16px] hover:opacity-80 transition-opacity cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5 stroke-[2.6]" />
-            <span>AI Chatbot</span>
+            <span>Trợ lý AI Mai Hà</span>
           </button>
 
-          <button
-            onClick={onBackToHome}
-            className="text-[#124c34] hover:opacity-80 transition-opacity p-1 cursor-pointer"
-            aria-label="Trang chủ"
-          >
-            <Home className="w-6 h-6 stroke-[2.4]" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setShowFaqModal(true)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#124c34] text-[11.5px] font-bold border border-emerald-700/15 transition-colors cursor-pointer"
+              title="Câu hỏi gợi ý"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Gợi ý</span>
+            </button>
+            <button
+              onClick={handleResetChat}
+              className="p-1.5 rounded-full text-[#124c34] hover:bg-emerald-50 transition-colors cursor-pointer"
+              title="Cuộc trò chuyện mới"
+              aria-label="Cuộc trò chuyện mới"
+            >
+              <RotateCcw className="w-4.5 h-4.5 stroke-[2.3]" />
+            </button>
+            <button
+              onClick={onBackToHome}
+              className="text-[#124c34] hover:opacity-80 transition-opacity p-1 cursor-pointer"
+              aria-label="Trang chủ"
+            >
+              <Home className="w-5.5 h-5.5 stroke-[2.4]" />
+            </button>
+          </div>
         </div>
 
-        {/* Subheader: Hasaki Admin + Bot badge */}
-        <div className="flex flex-col items-center justify-center pt-1 pb-1">
-          <HasakiLogo size={48} className="rounded-2xl shadow-xs" />
-          <h2 className="text-[#124c34] font-bold text-[16px] mt-1.5 leading-tight">
-            Hasaki Admin
-          </h2>
-          <p className="text-[#e57849] font-medium text-[12px] mt-0.5 tracking-tight text-center">
-            Bạn đang được hỗ trợ bởi Hasaki Skin Journey Bot
-          </p>
+        {/* Subheader: Mai Hà Profile Card */}
+        <div className="flex items-center gap-3 px-2.5 py-1.5 bg-[#f4f8f5] rounded-2xl border border-emerald-900/[0.06]">
+          <div className="relative flex-shrink-0">
+            <img
+              src="/images/mai_ha_avatar.jpg"
+              alt="Chuyên viên AI Mai Hà"
+              className="w-11 h-11 rounded-full object-cover border-2 border-[#105e3f] shadow-xs"
+            />
+            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white shadow-xs" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <h2 className="text-[#124c34] font-extrabold text-[15px] leading-tight truncate">
+                Mai Hà
+              </h2>
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-[#105e3f] bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                <Sparkles className="w-2.5 h-2.5" />
+                AI Tư vấn
+              </span>
+            </div>
+            <p className="text-[#e57849] font-medium text-[11.5px] mt-0.5 truncate">
+              Đang trực tuyến • Chuyên viên chăm sóc da Hasaki
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Main Scrollable Body */}
-      <div className="w-full flex-1 overflow-y-auto no-scrollbar px-5 py-2 flex flex-col">
-        
-        {/* VIEW 1: HÌNH 1 - Hiển thị 4 câu hỏi có sẵn khi chưa có hội thoại */}
-        {messages.length === 0 ? (
-          <div className="my-auto flex flex-col items-center justify-center animate-fade-in pb-4">
-            
-            {/* Title: Hôm nay làn da của bạn thế nào? */}
-            <h1 className="text-[#124c34] font-extrabold text-[27px] text-center tracking-tight leading-tight mb-6">
-              Hôm nay làn da<br />của bạn thế nào?
-            </h1>
+      {/* Main Scrollable Chat Stream */}
+      <div className="w-full flex-1 overflow-y-auto no-scrollbar px-4 py-3 flex flex-col">
+        <div className="space-y-3.5 pb-2">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} animate-fade-in`}
+            >
+              {msg.sender === 'user' ? (
+                /* User Message Bubble */
+                <div className="max-w-[85%] bg-[#cbe3d4] text-slate-900 px-4 py-2.5 rounded-[20px] rounded-br-[6px] text-[13.5px] leading-relaxed shadow-xs border border-emerald-900/[0.06]">
+                  <p className="select-text">{msg.text}</p>
+                  {msg.timestamp && (
+                    <div className="text-[10px] text-emerald-900/60 text-right mt-1 font-medium">
+                      {msg.timestamp}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Mai Hà Reply Bubble with Mini Avatar */
+                <div className="flex items-end gap-2 max-w-[94%]">
+                  <img
+                    src="/images/mai_ha_avatar.jpg"
+                    alt="Mai Hà"
+                    className="w-7 h-7 rounded-full object-cover border border-[#105e3f]/30 flex-shrink-0 mb-1 shadow-xs"
+                  />
+                  <div className="flex-1 bg-white text-slate-800 px-4 py-3 rounded-[20px] rounded-bl-[6px] text-[13.5px] leading-[20px] shadow-xs border border-emerald-900/[0.06]">
+                    <div className="text-[11px] font-bold text-[#105e3f] mb-1">
+                      Mai Hà
+                    </div>
+                    <div className="select-text">
+                      {renderFormattedText(msg.text)}
+                    </div>
 
-            {/* 4 Preset Question Cards matching Hình 1 */}
-            <div className="w-full flex flex-col gap-3">
-              {presetQuestions.map((item) => (
+                    {msg.actionLink && (
+                      <button
+                        type="button"
+                        onClick={() => handleActionClick(msg.actionLink.target)}
+                        className="mt-2.5 w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#105e3f] border border-emerald-700/20 font-bold text-[12.5px] flex items-center justify-between transition-all cursor-pointer active:scale-[0.98]"
+                      >
+                        <span>{msg.actionLink.label}</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    )}
+
+                    {msg.timestamp && (
+                      <div className="text-[10px] text-slate-400 text-right mt-1.5 font-medium">
+                        {msg.timestamp}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Typing Indicator */}
+          {isBotTyping && (
+            <div className="flex items-end gap-2 animate-fade-in">
+              <img
+                src="/images/mai_ha_avatar.jpg"
+                alt="Mai Hà"
+                className="w-7 h-7 rounded-full object-cover border border-[#105e3f]/30 flex-shrink-0 mb-1 shadow-xs"
+              />
+              <div className="bg-white px-4 py-3 rounded-[20px] rounded-bl-[6px] shadow-xs border border-slate-100 flex items-center gap-2">
+                <span className="text-[11.5px] font-semibold text-slate-500">Mai Hà đang nhập</span>
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Contextual Quick Reply Chips */}
+          {!isBotTyping && quickReplies.length > 0 && (
+            <div className="pt-1 pl-9 flex flex-wrap gap-2 animate-fade-in">
+              {quickReplies.map((chip, idx) => (
                 <button
-                  key={item.id}
-                  onClick={() => handleSelectPreset(item)}
-                  className="w-full bg-white hover:bg-emerald-50/70 active:scale-[0.99] text-left p-4 rounded-[22px] shadow-xs border border-emerald-900/[0.05] transition-all cursor-pointer group"
+                  key={idx}
+                  type="button"
+                  onClick={() => processUserMessage(chip)}
+                  className="bg-white hover:bg-emerald-50 active:scale-[0.97] text-[#105e3f] border border-[#105e3f]/25 rounded-full px-3.5 py-1.5 text-[12px] font-semibold shadow-xs transition-all cursor-pointer text-left"
                 >
-                  <p className="text-[13.5px] leading-[19px] font-medium text-slate-800 group-hover:text-[#124c34]">
-                    {item.question}
-                  </p>
+                  {chip}
                 </button>
               ))}
             </div>
+          )}
 
-          </div>
-        ) : (
-          /* VIEW 2: HỘI THOẠI CHAT (Khớp Hình 2, 3, 4, 5) */
-          <div className="space-y-4 pb-4 animate-fade-in">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {msg.sender === 'user' ? (
-                  /* User Message Bubble matching Hình 2, 3, 4, 5 (soft sage/green container) */
-                  <div className="max-w-[88%] bg-[#cbe3d4] text-slate-900 px-4 py-3 rounded-[20px] text-[13.5px] leading-relaxed shadow-xs border border-emerald-900/[0.04]">
-                    {msg.text}
-                  </div>
-                ) : (
-                  /* Bot Reply Bubble matching Hình 2, 3, 4, 5 (white container with full styled text) */
-                  <div className="max-w-[94%] bg-white text-slate-800 p-4 rounded-[22px] text-[13px] leading-[19px] shadow-xs border border-emerald-900/[0.04] whitespace-pre-line">
-                    {msg.text}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Typing Indicator */}
-            {isBotTyping && (
-              <div className="flex justify-start">
-                <div className="bg-white px-4 py-3 rounded-[20px] shadow-xs border border-slate-100 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
-              </div>
-            )}
-
-            {/* Quick Option to ask another preset or reset */}
-            {!isBotTyping && messages.length > 0 && (
-              <div className="pt-2 flex justify-center">
-                <button
-                  onClick={handleResetChat}
-                  className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-white/90 hover:bg-white px-3 py-1.5 rounded-full shadow-xs border border-emerald-900/10 cursor-pointer transition-all"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Chọn câu hỏi gợi ý khác</span>
-                </button>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Bottom Input Bar matching all images */}
-      <div className="px-5 py-3.5 bg-[#f2f6f3] flex-shrink-0">
+      {/* Bottom Input Bar */}
+      <div className="px-4 py-3 bg-[#f2f6f3] border-t border-emerald-900/[0.06] flex-shrink-0">
         <form 
           onSubmit={handleSendMessage}
-          className="relative w-full flex items-center bg-white rounded-full border border-emerald-900/10 shadow-xs px-5 h-[52px]"
+          className="relative w-full flex items-center bg-white rounded-full border border-emerald-900/15 shadow-xs px-4 h-[50px] focus-within:border-[#105e3f] focus-within:ring-2 focus-within:ring-[#105e3f]/15 transition-all"
         >
           <input
+            ref={inputRef}
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Nhập tin nhắn....."
-            className="flex-1 bg-transparent text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none pr-8"
+            placeholder="Nhắn cho Mai Hà về làn da của bạn..."
+            className="flex-1 bg-transparent text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none pr-9"
           />
 
           <button
             type="submit"
-            disabled={!inputText.trim() && !isBotTyping}
-            className="absolute right-4 text-[#e57849] hover:text-[#d16132] p-1.5 transition-colors cursor-pointer disabled:opacity-50"
+            disabled={!inputText.trim() || isBotTyping}
+            className="absolute right-3.5 text-[#e57849] hover:text-[#d16132] p-1.5 transition-colors cursor-pointer disabled:opacity-40"
             aria-label="Gửi tin nhắn"
           >
             <Send className="w-5 h-5 stroke-[2.2]" />
           </button>
         </form>
       </div>
+
+      {/* FAQ Preset Questions Bottom Sheet Modal */}
+      {showFaqModal && (
+        <div className="absolute inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-end justify-center animate-fade-in">
+          <div className="w-full max-h-[82%] bg-white rounded-t-[26px] p-5 shadow-2xl animate-slide-up flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="font-extrabold text-[16px] text-[#124c34]">
+                  Câu hỏi gợi ý cho Mai Hà
+                </h3>
+                <p className="text-[11.5px] text-slate-500">
+                  Chọn nhanh một chủ đề để Mai Hà tư vấn chi tiết
+                </p>
+              </div>
+              <button
+                onClick={() => setShowFaqModal(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 cursor-pointer"
+              >
+                <X className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto no-scrollbar space-y-2.5 pt-3 pb-2">
+              {presetQuestions.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSelectPreset(item)}
+                  className="w-full bg-[#f4f8f5] hover:bg-emerald-50 active:scale-[0.99] text-left p-3.5 rounded-2xl border border-emerald-900/[0.08] transition-all cursor-pointer group"
+                >
+                  <p className="text-[13px] leading-[18.5px] font-medium text-slate-800 group-hover:text-[#124c34]">
+                    {item.question}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
