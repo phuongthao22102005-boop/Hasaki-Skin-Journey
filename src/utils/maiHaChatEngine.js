@@ -186,7 +186,7 @@ export function generateMaiHaReply(userInput, chatContext = {}, user = {}, prese
   // 4. Clinic / Booking / Price / Store Inquiries
   if (/dat lich|hen lich|clinic|phong kham|bac si|soi da|bang gia|gia dich vu|lay nhan mun|peel da|chi nhanh|cua hang/.test(norm)) {
     return {
-      reply: `Dạ về dịch vụ tại Hasaki thì ${callName} yên tâm nha! 🏥\n\n• **Soi da & Tư vấn tại cửa hàng:** Hoàn toàn **MIỄN PHÍ 100%** cùng chuyên viên tư vấn.\n• **Điều trị chuẩn y khoa tại Hasaki Clinic:** Có Bác sĩ Da liễu trực tiếp thăm khám, giá cực kỳ minh bạch:\n  - Combo Lấy nhân mụn + đắp mặt nạ + chiếu đèn: **249.000₫**\n  - Peel da BHA 20% trị mụn: **350.000₫**\n  - Điện di lạnh phục hồi da: **500.000₫**\n\nNếu muốn, ${callName} bấm nút bên dưới để chọn ngày giờ & chi nhánh gần bạn nhất luôn nhé, đặt xong có phiếu hẹn lưu lại ngay trên app tiện lắm ạ!`,
+      reply: `Dạ về dịch vụ tại Hasaki thì ${callName} yên tâm nha! 🏥\n\n• **Đặt lịch thăm khám & Soi da tại Hasaki Clinic:** Hoàn toàn **MIỄN PHÍ 100%** khi đặt lịch soi da cùng Bác sĩ Da liễu.\n• **Điều trị chuẩn y khoa tại Hasaki Clinic:** Giá cực kỳ minh bạch:\n  - Combo Lấy nhân mụn + đắp mặt nạ + chiếu đèn: **249.000₫**\n  - Peel da BHA 20% trị mụn: **350.000₫**\n  - Điện di lạnh phục hồi da: **500.000₫**\n\nNếu muốn, ${callName} bấm nút bên dưới để chọn ngày giờ & chi nhánh Hasaki Clinic gần bạn nhất luôn nhé, đặt xong có phiếu hẹn lưu lại ngay trên app tiện lắm ạ!`,
       updatedContext: ctx,
       quickReplies: [
         'Mình muốn tư vấn thêm về da trước',

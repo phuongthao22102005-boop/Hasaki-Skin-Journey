@@ -44,7 +44,7 @@ export default function ScreenTatCaTienIch({
           <Clock className="w-3.5 h-3.5 text-emerald-700 absolute -bottom-1 -right-1 bg-white rounded-full p-0.5" />
         </div>
       ),
-      description: 'Đặt lịch thăm khám, soi da miễn phí tại Cửa hàng hoặc Hasaki Clinic & Spa.',
+      description: 'Đặt lịch thăm khám, soi da và tư vấn chuyên sâu tại Hasaki Clinic & Spa.',
       badge: 'Phổ biến'
     },
     {

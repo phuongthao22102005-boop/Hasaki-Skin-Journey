@@ -8,7 +8,6 @@ import {
   Phone, 
   X, 
   Calendar, 
-  Store, 
   CalendarDays, 
   UserCheck, 
   Clock, 
@@ -44,36 +43,30 @@ export default function ScreenDatLich({
   // Navigation states:
   // 'initial_1'      : Hình 1 ban đầu (Chọn hồ sơ)
   // 'initial_3'      : Hình 3 ban đầu (Theo lịch hẹn)
-  // 'store_flow_1'   : Chọn thông tin khám: Cửa hàng / Clinic/Spa
-  // 'store_flow_2'   : Chọn chi nhánh cửa hàng
-  // 'store_flow_3'   : Chọn ngày tư vấn (Cửa hàng)
-  // 'store_flow_4'   : Chọn khung giờ tư vấn (Cửa hàng)
-  // 'store_flow_5'   : Thông tin chuyên viên (Cửa hàng)
   // 'clinic_flow_2'  : Chọn chi nhánh Hasaki Clinic & Spa
   // 'clinic_flow_3'  : Chọn ngày khám Clinic
   // 'clinic_flow_4'  : Chọn Bác sĩ & Khung giờ Clinic
   // 'by_date_1'      : Đặt lịch theo ngày (Lịch chọn ngày + Khung giờ khả dụng)
-  // 'by_doctor_1'    : Danh sách Bác sĩ / KTV Hasaki
-  // 'by_doctor_2'    : Chọn ngày & giờ khám với Bác sĩ / KTV đã chọn
-  // 'doctor_profile' : Hồ sơ chi tiết Bác sĩ / KTV
+  // 'by_doctor_1'    : Danh sách Bác sĩ Hasaki Clinic
+  // 'by_doctor_2'    : Chọn ngày & giờ khám với Bác sĩ đã chọn
+  // 'doctor_profile' : Hồ sơ chi tiết Bác sĩ Hasaki Clinic
   // 'confirm_step_1' : Chọn thông tin tư vấn (Hình 1)
   // 'confirm_step_2' : Thông tin đặt tư vấn (Hình 2 - Miễn phí 0đ)
   const [step, setStep] = useState('initial_1');
+  const [confirmReturnStep, setConfirmReturnStep] = useState('clinic_flow_4');
   const [showOptionModal, setShowOptionModal] = useState(false);
 
   // Selected branch & search
   const [selectedBranch, setSelectedBranch] = useState({
-    id: 'q7',
-    name: 'Chi nhánh Quận 7',
+    id: 'clinic_q7',
+    name: 'Hasaki Clinic Quận 7',
     address: '468A Nguyễn Thị Thập, Phường Tân Quy',
-    type: 'store'
+    type: 'clinic'
   });
   const [branchSearch, setBranchSearch] = useState('');
 
   // Selected date parameters
   const [selectedDate, setSelectedDate] = useState('31/10/2026');
-  const [selectedDateTab1, setSelectedDateTab1] = useState('30/10');
-  const [selectedDateTab2, setSelectedDateTab2] = useState('30/10');
 
   // Calendar month/year navigation state
   const [calendarMonth, setCalendarMonth] = useState(10);
@@ -123,8 +116,7 @@ export default function ScreenDatLich({
     return false;
   };
 
-  // Selected consultant / doctor for details view
-  const [selectedConsultantKey, setSelectedConsultantKey] = useState('thuy_anh');
+  // Selected doctor for details view
   const [selectedDoctorKey, setSelectedDoctorKey] = useState('minh');
   const [selectedSession, setSelectedSession] = useState('Sáng thứ 6');
   const [doctorProfileReturnStep, setDoctorProfileReturnStep] = useState('by_doctor_1');
@@ -133,11 +125,11 @@ export default function ScreenDatLich({
 
   // Confirmation flow state (Hình 1 & Hình 2)
   const [currentBooking, setCurrentBooking] = useState({
-    branch: 'Cửa hàng quận 7',
+    branch: 'Hasaki Clinic Quận 7',
     date: '31/10/2026',
-    time: '09:30 - 10:00',
-    consultant: 'Trần Thùy Anh',
-    serviceType: 'TƯ VẤN TẠI CỬA HÀNG',
+    time: '09:30 - 10:30',
+    consultant: 'BS. CKI Vũ Hoài Nam',
+    serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
     hasVoucher: false,
     voucherCode: '',
     price: 0
@@ -172,16 +164,6 @@ export default function ScreenDatLich({
   const customerCode = 'N18-000001';
   const phoneNumber = user?.phone || '087*******99';
 
-  // Store branches (Cửa hàng)
-  const storeBranches = [
-    { id: 'q10', name: 'Chi nhánh Quận 10', address: '555 Đường 3 Tháng 2, Phường Diên Hồng', type: 'store' },
-    { id: 'tanbinh', name: 'Chi nhánh Quận Tân Bình', address: '71 Hoàng Hoa Thám, Phường 13', type: 'store' },
-    { id: 'phunhuan', name: 'Chi nhánh Quận Phú Nhuận', address: '176 Phan Đăng Lưu, Phường Đức Nhuận', type: 'store' },
-    { id: 'binhthanh', name: 'Chi nhánh Quận Bình Thạnh', address: '119-121 Nguyễn Gia Trí, Phường Thạnh Mỹ Tây', type: 'store' },
-    { id: 'q3', name: 'Chi nhánh Quận 3', address: '189A-189B Hai Bà Trưng, Phường Võ Thị Sáu', type: 'store' },
-    { id: 'q7', name: 'Chi nhánh Quận 7', address: '468A Nguyễn Thị Thập, Phường Tân Quy', type: 'store' }
-  ];
-
   // Clinic branches (Clinic/Spa)
   const clinicBranches = [
     { id: 'clinic_q10', name: 'Hasaki Clinic Quận 10', address: '555 Đường 3 Tháng 2, Phường Diên Hồng', type: 'clinic' },
@@ -209,6 +191,11 @@ export default function ScreenDatLich({
       specialty: 'Khám & điều trị mụn trứng cá, sẹo rỗ, nám da, viêm da tiếp xúc',
       field: 'Da liễu bệnh lý, laser thẩm mỹ, phục hồi da tổn thương sau corticoid',
       schedule: 'Thứ 2, Thứ 4, Thứ 6 (08:30 - 17:30)',
+      price: '0đ (Miễn phí)',
+      sessions: [
+        { label: 'Sáng thứ 2', day: '02/11/2026', time: '09:30 - 10:30' },
+        { label: 'Sáng thứ 6', day: '30/10/2026', time: '10:30 - 12:00' }
+      ],
       serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
       education: [
         '2014: Tốt nghiệp Bác sĩ Đa khoa - Đại học Y Dược TP.HCM.',
@@ -251,6 +238,11 @@ export default function ScreenDatLich({
       specialty: 'Trị liệu sắc tố, trẻ hóa da, căng bóng phục hồi hàng rào da',
       field: 'Tư vấn phác đồ chống lão hóa, trị thâm mụn, nám mảng, peel da sinh học',
       schedule: 'Thứ 3, Thứ 5, Thứ 7 (09:00 - 18:00)',
+      price: '0đ (Miễn phí)',
+      sessions: [
+        { label: 'Chiều thứ 3', day: '03/11/2026', time: '14:00 - 15:30' },
+        { label: 'Chiều thứ 7', day: '31/10/2026', time: '15:30 - 17:00' }
+      ],
       serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
       education: [
         '2016: Tốt nghiệp Bác sĩ Y khoa - ĐH Y Dược TP.HCM.',
@@ -276,81 +268,20 @@ export default function ScreenDatLich({
         { time: '15:30 - 17:00', status: 'available' }
       ]
     },
-    thuy_anh: {
-      id: 'thuy_anh',
-      name: 'Chuyên viên tư vấn Trần Thùy Anh',
-      shortName: 'Trần Thùy Anh',
-      type: 'specialist',
-      roleText: 'Chuyên viên tư vấn chăm sóc da',
-      gender: 'Nữ',
-      avatar: '/images/consultant_thuy_anh.png',
-      specialty: 'TƯ VẤN CHĂM SÓC DA',
-      price: 'MIỄN PHÍ',
-      branch: 'Chi nhánh Quận 7',
-      sessions: [
-        { label: 'Sáng thứ 4', day: '28/10/2026', time: '10:00 - 11:30' },
-        { label: 'Sáng thứ 6', day: '30/10/2026', time: '11:30 - 12:30' }
-      ],
-      education: [
-        '2023: Hoàn thành khóa học chăm sóc da cơ bản và phân loại da.',
-        '2024: Hoàn thành khóa đào tạo tư vấn mỹ phẩm và xây dựng quy trình skincare.',
-        '2025: Hoàn thành chương trình đào tạo chuyên sâu về thành phần mỹ phẩm.'
-      ],
-      career: [
-        '2024 – nay: Chuyên viên tư vấn chăm sóc da tại Hasaki Store.',
-        'Tư vấn sản phẩm phù hợp với loại da và nhu cầu của khách hàng.',
-        'Hỗ trợ khách hàng lựa chọn sản phẩm skincare và xây dựng routine.'
-      ],
-      skills: [
-        'Phân tích nhu cầu chăm sóc da.',
-        'Tư vấn sản phẩm skincare.',
-        'Xây dựng routine chăm sóc da.',
-        'Tư vấn thành phần mỹ phẩm.'
-      ]
-    },
-    ngoc_anh: {
-      id: 'ngoc_anh',
-      name: 'Chuyên viên tư vấn Nguyễn Ngọc Ánh',
-      shortName: 'Nguyễn Ngọc Ánh',
-      type: 'specialist',
-      roleText: 'Chuyên viên tư vấn mỹ phẩm & chăm sóc da',
-      gender: 'Nữ',
-      avatar: '/images/consultant_ngoc_anh.png',
-      specialty: 'TƯ VẤN CHĂM SÓC DA',
-      price: 'MIỄN PHÍ',
-      branch: 'Chi nhánh Quận 7',
-      sessions: [
-        { label: 'Chiều thứ 5', day: '29/10/2026', time: '14:30 - 15:30' },
-        { label: 'Chiều thứ 7', day: '31/10/2026', time: '16:00 - 17:30' }
-      ],
-      education: [
-        '2022: Hoàn thành khóa học kiến thức cơ bản về da và mỹ phẩm.',
-        '2023: Hoàn thành chương trình đào tạo tư vấn chăm sóc da dầu và da mụn.',
-        '2024: Hoàn thành khóa học về thành phần mỹ phẩm và sản phẩm phục hồi da.'
-      ],
-      career: [
-        '2023 – nay: Chuyên viên tư vấn mỹ phẩm tại Hasaki Store.',
-        'Tư vấn sản phẩm phù hợp với tình trạng da và nhu cầu của khách hàng.',
-        'Hỗ trợ khách hàng lựa chọn sản phẩm chăm sóc da dầu, da mụn.'
-      ],
-      skills: [
-        'Tư vấn chăm sóc da dầu và da mụn.',
-        'Tư vấn sản phẩm phục hồi da.',
-        'Phân tích thành phần mỹ phẩm.',
-        'Xây dựng routine skincare cá nhân hóa.'
-      ]
-    },
     linh: {
       id: 'linh',
       name: 'BS. Trần Khánh Linh',
       shortName: 'BS. Trần Khánh Linh',
       type: 'doctor',
       roleText: 'Bác sĩ Da liễu Hasaki Clinic',
+      subtitle: 'Bác sĩ Da liễu Thẩm mỹ & Phục hồi da',
       gender: 'Nữ',
       avatar: '/images/doctor_linh.png',
+      experience: '7 năm kinh nghiệm',
       specialty: 'DA LIỄU',
       price: '50.000đ',
-      branch: 'Chi nhánh Quận 7',
+      branch: 'Hasaki Clinic Quận 7',
+      schedule: 'Thứ 5, Thứ 7 (09:00 - 17:30)',
       sessions: [
         { label: 'Chiều thứ 5', day: '29/10/2026', time: '14:00 - 15:30' },
         { label: 'Chiều thứ 7', day: '31/10/2026', time: '15:30 - 17:00' }
@@ -376,11 +307,14 @@ export default function ScreenDatLich({
       shortName: 'ThS. BS. Nguyễn Thu Minh',
       type: 'doctor',
       roleText: 'Thạc sĩ - Bác sĩ Da liễu Hasaki Clinic',
+      subtitle: 'Thạc sĩ Da liễu & Điều trị Laser Thẩm mỹ',
       gender: 'Nữ',
       avatar: '/images/doctor_minh.png',
+      experience: '9 năm kinh nghiệm',
       specialty: 'DA LIỄU',
       price: '50.000đ',
-      branch: 'Chi nhánh Quận 7',
+      branch: 'Hasaki Clinic Quận 7',
+      schedule: 'Thứ 6, Chủ nhật (08:30 - 17:00)',
       sessions: [
         { label: 'Sáng thứ 6', day: '30/10/2026', time: '11:30 - 12:30' },
         { label: 'Sáng chủ nhật', day: '25/10/2026', time: '09:30 - 11:00' }
@@ -403,18 +337,13 @@ export default function ScreenDatLich({
     }
   };
 
-  const filteredStoreBranches = storeBranches.filter(b => 
-    b.name.toLowerCase().includes(branchSearch.toLowerCase()) || 
-    b.address.toLowerCase().includes(branchSearch.toLowerCase())
-  );
-
   const filteredClinicBranches = clinicBranches.filter(b => 
     b.name.toLowerCase().includes(branchSearch.toLowerCase()) || 
     b.address.toLowerCase().includes(branchSearch.toLowerCase())
   );
 
-  // Four doctors/consultants in Hình 1 in exact specified order
-  const doctorKeysOrdered = ['thuy_anh', 'ngoc_anh', 'linh', 'minh'];
+  // Clinic doctors listed in "Đặt lịch theo Bác sĩ"
+  const doctorKeysOrdered = ['bs_nam', 'bs_chi', 'linh', 'minh'];
   const doctorsList = doctorKeysOrdered.map(k => doctorsData[k]).filter(d => {
     if (!d) return false;
     const matchSearch = d.name.toLowerCase().includes(doctorSearch.toLowerCase()) ||
@@ -428,29 +357,26 @@ export default function ScreenDatLich({
     timeSlot, 
     date = selectedDate || '31/10/2026', 
     branchOverride = null,
-    serviceTypeOverride = null
+    serviceTypeOverride = null,
+    returnStep = 'clinic_flow_4'
   ) => {
-    const activeBranchName = branchOverride || selectedBranch?.name || 'Chi nhánh Quận 7';
-    const branchNameClean = activeBranchName.toLowerCase().includes('cửa hàng') || activeBranchName.toLowerCase().includes('clinic')
-      ? activeBranchName
-      : (activeBranchName.toLowerCase().includes('chi nhánh') 
-          ? 'Cửa hàng ' + activeBranchName.toLowerCase().replace('chi nhánh ', '')
-          : activeBranchName);
+    const activeBranchName = branchOverride || selectedBranch?.name || 'Hasaki Clinic Quận 7';
 
     setCurrentBooking({
-      branch: branchNameClean,
+      branch: activeBranchName,
       date: date || '31/10/2026',
-      time: timeSlot || '09:30 - 10:00',
-      consultant: consultantName || 'Trần Thùy Anh',
-      serviceType: serviceTypeOverride || (activeBranchName.toLowerCase().includes('clinic') ? 'TƯ VẤN & KHÁM DA TẠI CLINIC' : 'TƯ VẤN TẠI CỬA HÀNG'),
+      time: timeSlot || '09:30 - 10:30',
+      consultant: consultantName || 'BS. CKI Vũ Hoài Nam',
+      serviceType: serviceTypeOverride || 'TƯ VẤN & KHÁM DA TẠI CLINIC',
       hasVoucher: false,
       voucherCode: '',
       price: 0
     });
+    setConfirmReturnStep(returnStep);
     setStep('confirm_step_1');
   };
 
-  // Random consultant assignment for "Đặt lịch theo ngày"
+  // Random Clinic doctor assignment for "Đặt lịch theo ngày"
   const handleSelectDateRandomSlot = (slotTime) => {
     const randomPool = [
       {
@@ -464,18 +390,18 @@ export default function ScreenDatLich({
         serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
       },
       {
-        doctor: 'Chuyên viên Trần Thùy Anh',
-        branch: 'Hasaki Store Chi nhánh Quận 7',
-        serviceType: 'TƯ VẤN TẠI CỬA HÀNG'
+        doctor: 'BS. Trần Khánh Linh',
+        branch: 'Hasaki Clinic Quận 7',
+        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
       },
       {
-        doctor: 'Chuyên viên Nguyễn Ngọc Ánh',
-        branch: 'Hasaki Store Chi nhánh Quận 7',
-        serviceType: 'TƯ VẤN TẠI CỬA HÀNG'
+        doctor: 'ThS. BS. Nguyễn Thu Minh',
+        branch: 'Hasaki Clinic Quận 10',
+        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
       }
     ];
     const assigned = randomPool[Math.floor(Math.random() * randomPool.length)];
-    handleSelectSlot(assigned.doctor, slotTime, selectedDate, assigned.branch, assigned.serviceType);
+    handleSelectSlot(assigned.doctor, slotTime, selectedDate, assigned.branch, assigned.serviceType, 'by_date_1');
   };
 
   // Choose doctor session from Hình 1 -> goes to Hình 2 (by_doctor_2: Chọn ngày thăm khám)
@@ -492,15 +418,16 @@ export default function ScreenDatLich({
   const handleSelectDoctorFinalSlot = (slotTime) => {
     const currentDoc = doctorsData[selectedDoctorKey] || doctorsData.minh;
     setCurrentBooking({
-      branch: currentDoc.branch || 'Chi nhánh Quận 7',
+      branch: currentDoc.branch || 'Hasaki Clinic Quận 7',
       date: selectedDate || '30/10/2026',
       time: slotTime || '11:30 - 12:30',
       consultant: currentDoc.name,
-      serviceType: currentDoc.type === 'doctor' ? 'KHÁM & TƯ VẤN DA LIỄU' : 'TƯ VẤN CHĂM SÓC DA',
+      serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
       hasVoucher: false,
       voucherCode: '',
-      price: currentDoc.price === 'MIỄN PHÍ' ? '0đ (Miễn phí)' : currentDoc.price
+      price: currentDoc.price === 'MIỄN PHÍ' || currentDoc.price === '0đ (Miễn phí)' ? '0đ (Miễn phí)' : (currentDoc.price || 0)
     });
+    setConfirmReturnStep('by_doctor_3');
     setStep('confirm_step_1');
   };
 
@@ -645,739 +572,21 @@ export default function ScreenDatLich({
               Chưa có lịch hẹn tư vấn
             </h3>
             <p className="text-[13px] text-gray-500 max-w-xs leading-relaxed mb-6">
-              Bạn chưa có lịch hẹn tư vấn nào sắp tới. Hãy bấm đặt lịch mới để được chuyên viên Hasaki chăm sóc làn da tốt nhất!
+              Bạn chưa có lịch hẹn tư vấn nào sắp tới. Hãy bấm đặt lịch mới để được Bác sĩ Da liễu Hasaki Clinic chăm sóc làn da tốt nhất!
             </p>
             <button
               type="button"
-              onClick={() => setStep('store_flow_1')}
+              onClick={() => setStep('clinic_flow_2')}
               className="px-6 py-3 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold text-[14px] shadow-sm active:scale-95 transition-all cursor-pointer"
             >
-              Đặt lịch tư vấn ngay
+              Đặt lịch tư vấn Clinic ngay
             </button>
           </div>
         </div>
       )}
 
       {/* ============================================================== */}
-      {/* 3. STORE_FLOW_1: CHỌN THÔNG TIN KHÁM (Cửa hàng / Clinic)        */}
-      {/* ============================================================== */}
-      {step === 'store_flow_1' && (
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <div className="px-5 pt-3 pb-3 flex-shrink-0 bg-white shadow-xs z-10">
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setStep('initial_1')}
-                className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                <span>Chọn thông tin khám</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onBackToHome}
-                className="text-[#105e3f] hover:opacity-80 transition-opacity p-1 cursor-pointer"
-                aria-label="Trang chủ"
-              >
-                <Home className="w-6 h-6 stroke-[2.4]" />
-              </button>
-            </div>
-          </div>
-
-          <div className="p-4 pt-6 space-y-3.5 flex-1 overflow-y-auto">
-            {/* Option 1: Cửa hàng */}
-            <div
-              onClick={() => setStep('store_flow_2')}
-              className="bg-white rounded-2xl p-5 shadow-xs border border-gray-100 flex items-center justify-between cursor-pointer hover:border-[#105e3f] hover:shadow-md active:scale-[0.99] transition-all group"
-            >
-              <div>
-                <span className="font-extrabold text-[18px] text-[#105e3f] tracking-tight block">
-                  Cửa hàng
-                </span>
-                <span className="text-[12px] text-gray-500 font-medium">
-                  Tư vấn skincare & lựa chọn mỹ phẩm trực tiếp
-                </span>
-              </div>
-              <ChevronRight className="w-6 h-6 text-slate-700 group-hover:text-[#105e3f] group-hover:translate-x-1 transition-all" />
-            </div>
-
-            {/* Option 2: Clinic/Spa */}
-            <div
-              onClick={() => setStep('clinic_flow_2')}
-              className="bg-white rounded-2xl p-5 shadow-xs border border-gray-100 flex items-center justify-between cursor-pointer hover:border-[#105e3f] hover:shadow-md active:scale-[0.99] transition-all group"
-            >
-              <div>
-                <span className="font-extrabold text-[18px] text-[#105e3f] tracking-tight block">
-                  Clinic/Spa
-                </span>
-                <span className="text-[12px] text-gray-500 font-medium">
-                  Khám da liễu chuyên sâu cùng Bác sĩ Da liễu & KTV
-                </span>
-              </div>
-              <ChevronRight className="w-6 h-6 text-slate-700 group-hover:text-[#105e3f] group-hover:translate-x-1 transition-all" />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================== */}
-      {/* 4. STORE_FLOW_2: CHỌN CHI NHÁNH CỬA HÀNG                        */}
-      {/* ============================================================== */}
-      {step === 'store_flow_2' && (
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <div className="flex-shrink-0 bg-white shadow-xs z-10">
-            <div className="px-5 pt-3 pb-3">
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep('store_flow_1')}
-                  className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
-                >
-                  <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                  <span>Chọn chi nhánh cửa hàng</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onBackToHome}
-                  className="text-[#105e3f] hover:opacity-80 transition-opacity p-1 cursor-pointer"
-                  aria-label="Trang chủ"
-                >
-                  <Home className="w-6 h-6 stroke-[2.4]" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-4 pt-1 pb-3 bg-[#eff4ef]">
-              <div className="relative flex items-center bg-white rounded-full border border-gray-300 px-4 py-2.5 shadow-xs focus-within:border-[#105e3f]">
-                <Search className="w-4 h-4 text-gray-500 mr-2.5" />
-                <input
-                  type="text"
-                  value={branchSearch}
-                  onChange={(e) => setBranchSearch(e.target.value)}
-                  placeholder="Tìm nhanh chi nhánh"
-                  className="w-full text-[14px] bg-transparent outline-none text-slate-800 placeholder-gray-400 font-medium"
-                />
-                <Mic className="w-4 h-4 text-gray-500 ml-2 cursor-pointer hover:text-[#105e3f]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-3 pb-24 scroll-smooth">
-            {filteredStoreBranches.map((b) => (
-              <div
-                key={b.id}
-                onClick={() => {
-                  setSelectedBranch(b);
-                  setStep('store_flow_3');
-                }}
-                className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100 flex items-center justify-between cursor-pointer hover:border-[#105e3f] hover:shadow-md active:scale-[0.99] transition-all group"
-              >
-                <div className="pr-3">
-                  <h4 className="font-extrabold text-[16px] text-slate-900 group-hover:text-[#105e3f] transition-colors leading-tight mb-1">
-                    {b.name}
-                  </h4>
-                  <p className="text-[13px] text-gray-600 font-medium leading-relaxed">
-                    {b.address}
-                  </p>
-                </div>
-                <div className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center flex-shrink-0 group-hover:border-[#105e3f] group-hover:bg-emerald-50 transition-colors">
-                  <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-[#105e3f]" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================== */}
-      {/* 5. STORE_FLOW_3: CHỌN NGÀY TƯ VẤN (Cửa hàng)                    */}
-      {/* ============================================================== */}
-      {step === 'store_flow_3' && (
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <div className="px-5 pt-3 pb-3 flex-shrink-0 bg-white shadow-xs z-10">
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setStep('store_flow_2')}
-                className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                <span>Chọn ngày tư vấn</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onBackToHome}
-                className="text-[#105e3f] hover:opacity-80 transition-opacity p-1 cursor-pointer"
-                aria-label="Trang chủ"
-              >
-                <Home className="w-6 h-6 stroke-[2.4]" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 pt-4 pb-24 scroll-smooth">
-            <div className="bg-white rounded-3xl p-5 shadow-xs border border-gray-100">
-              <div className="flex items-center justify-between mb-6 px-4">
-                <button
-                  type="button"
-                  onClick={handlePrevMonth}
-                  disabled={calendarYear === 2026 && calendarMonth <= 10}
-                  className={`w-10 h-10 rounded-full bg-[#105e3f] text-white flex items-center justify-center transition-all ${
-                    calendarYear === 2026 && calendarMonth <= 10 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[#0c4a31] cursor-pointer shadow-xs'
-                  }`}
-                >
-                  <ChevronLeft className="w-6 h-6 stroke-[2.8]" />
-                </button>
-                <h3 className="font-extrabold text-[18px] text-[#105e3f]">
-                  Tháng {calendarMonth} - {calendarYear}
-                </h3>
-                <button
-                  type="button"
-                  onClick={handleNextMonth}
-                  className="w-10 h-10 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white flex items-center justify-center cursor-pointer shadow-xs transition-all"
-                >
-                  <ChevronRight className="w-6 h-6 stroke-[2.8]" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-7 text-center font-bold text-[16px] mb-3">
-                <span className="text-[#ea580c]">Su</span>
-                <span className="text-[#0284c7]">Mo</span>
-                <span className="text-[#0284c7]">Tu</span>
-                <span className="text-[#0284c7]">We</span>
-                <span className="text-[#0284c7]">Th</span>
-                <span className="text-[#0284c7]">Fr</span>
-                <span className="text-[#0284c7]">Sa</span>
-              </div>
-
-              <div className="grid grid-cols-7 text-center gap-y-3 font-medium text-[16px]">
-                {(() => {
-                  const firstDayIndex = new Date(calendarYear, calendarMonth - 1, 1).getDay();
-                  const daysInMonth = new Date(calendarYear, calendarMonth, 0).getDate();
-                  const blanks = Array.from({ length: firstDayIndex }, (_, i) => (
-                    <span key={`blank-${i}`} />
-                  ));
-                  const dayCells = Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
-                    const dayStr = `${String(day).padStart(2, '0')}/${String(calendarMonth).padStart(2, '0')}/${calendarYear}`;
-                    const dayOfWeek = (firstDayIndex + day - 1) % 7;
-                    const isSunday = dayOfWeek === 0;
-                    const selectable = isDaySelectable(day, calendarMonth, calendarYear);
-                    if (selectable) {
-                      return (
-                        <div
-                          key={day}
-                          onClick={() => {
-                            setSelectedDate(dayStr);
-                            setSelectedDateTab1(`${String(day).padStart(2, '0')}/${String(calendarMonth).padStart(2, '0')}`);
-                            setSelectedDateTab2(`${String(day).padStart(2, '0')}/${String(calendarMonth).padStart(2, '0')}`);
-                            setStep('store_flow_4');
-                          }}
-                          className="py-1 cursor-pointer flex items-center justify-center"
-                        >
-                          <span className="w-8 h-8 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold flex items-center justify-center shadow-xs active:scale-95 transition-all">
-                            {day}
-                          </span>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div key={day} className="py-1 flex items-center justify-center">
-                        <span className={`w-8 h-8 flex items-center justify-center font-medium opacity-60 ${isSunday ? 'text-[#ea580c]' : 'text-[#0284c7]'}`}>
-                          {day}
-                        </span>
-                      </div>
-                    );
-                  });
-                  return [...blanks, ...dayCells];
-                })()}
-              </div>
-            </div>
-
-            <div className="mt-4 bg-[#e5e9e5] rounded-xl px-4 py-3 border-l-4 border-[#105e3f] text-[13px] text-slate-800 font-medium">
-              Chọn ngày có <span className="text-[#105e3f] font-bold">màu xanh lá</span> để đặt khám.
-            </div>
-
-            <div className="mt-4 space-y-2 text-[13px] text-slate-700 pl-2">
-              <div className="flex items-center gap-3">
-                <span className="w-3.5 h-3.5 rounded-full bg-[#105e3f] flex-shrink-0" />
-                <span>Ngày có thể chọn</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="w-3.5 h-3.5 rounded-full bg-gray-400 flex-shrink-0" />
-                <span>Ngày không chọn</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="w-3.5 h-3.5 rounded-full bg-[#f59e0b] flex-shrink-0" />
-                <span>Ngày Lễ, Tết</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================== */}
-      {/* 6. STORE_FLOW_4: CHỌN KHUNG GIỜ TƯ VẤN (Cửa hàng)               */}
-      {/* ============================================================== */}
-      {step === 'store_flow_4' && (
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <div className="flex-shrink-0 bg-white shadow-xs z-10">
-            <div className="px-5 pt-3 pb-3">
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep('store_flow_3')}
-                  className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
-                >
-                  <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                  <span>Chọn khung giờ tư vấn</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onBackToHome}
-                  className="text-[#105e3f] hover:opacity-80 transition-opacity p-1 cursor-pointer"
-                  aria-label="Trang chủ"
-                >
-                  <Home className="w-6 h-6 stroke-[2.4]" />
-                </button>
-              </div>
-            </div>
-
-            <div className="px-5 py-2.5 bg-white border-t border-gray-100 shadow-2xs">
-              <h3 className="font-extrabold text-[13px] text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
-                <span className="w-1 h-3.5 bg-slate-900 inline-block rounded-xs" />
-                CHỌN KHUNG GIỜ TƯ VẤN
-              </h3>
-              <p className="text-[11.5px] italic text-gray-500 mt-0.5 font-medium">
-                Vui lòng bấm chọn khung giờ màu xanh lá để đặt lịch tư vấn
-              </p>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
-            {/* Consultant 1: Trần Thùy Anh */}
-            <div className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100">
-              <div className="flex items-start gap-3">
-                <img
-                  src="/images/consultant_thuy_anh.png"
-                  alt="Trần Thùy Anh"
-                  className="w-16 h-16 rounded-xl object-cover border border-emerald-100 flex-shrink-0"
-                />
-                <div className="flex-1">
-                  <h4 className="font-extrabold text-[15px] text-[#105e3f] leading-snug">
-                    Chuyên viên tư vấn Trần Thùy Anh
-                  </h4>
-                  <p className="text-[12px] italic text-gray-500 font-medium my-0.5">
-                    {selectedBranch.name}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedConsultantKey('thuy_anh');
-                      setStep('store_flow_5');
-                    }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#dbe5dd] text-slate-700 text-[11px] font-semibold hover:bg-[#ccd9cf] transition-colors cursor-pointer"
-                  >
-                    <span>Thông tin chuyên viên</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="border-b border-dashed border-gray-200 my-3.5" />
-
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                {(() => {
-                  const defaultDates = ['30/10', '06/11', '13/11', '20/11', '27/11', '29/11'];
-                  let dates = [...defaultDates];
-                  if (selectedDateTab1 && !dates.includes(selectedDateTab1)) {
-                    dates = [selectedDateTab1, ...dates];
-                  }
-                  return dates.map((dStr, idx) => {
-                    const isSelected = selectedDateTab1 === dStr;
-                    const yearStr = selectedDate?.split('/')[2] || `${calendarYear}`;
-                    return (
-                      <div
-                        key={idx}
-                        onClick={() => {
-                          setSelectedDateTab1(dStr);
-                          setSelectedDate(`${dStr}/${yearStr}`);
-                        }}
-                        className={`relative flex-shrink-0 w-[54px] py-1.5 rounded-xl text-center cursor-pointer transition-all ${
-                          isSelected ? 'bg-[#105e3f] text-white shadow-xs' : 'bg-[#e5e9e5] text-slate-800'
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white text-[#105e3f] flex items-center justify-center shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 fill-[#105e3f] text-white" />
-                          </div>
-                        )}
-                        <div className="font-extrabold text-[12px] leading-tight">{dStr}</div>
-                        <div className="text-[10px] opacity-80 leading-tight">{yearStr}</div>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-
-              <h5 className="font-extrabold text-[14px] text-[#105e3f] mt-2.5 mb-2.5">
-                {selectedDateTab1 ? `${selectedDateTab1}/${selectedDate?.split('/')[2] || calendarYear}` : (selectedDate || '30/10/2026')} - Buổi sáng ({getVietnameseDayOfWeek(selectedDateTab1 ? `${selectedDateTab1}/${selectedDate?.split('/')[2] || calendarYear}` : selectedDate)})
-              </h5>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">08:30 - 09:00</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">09:00 - 09:30</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">09:30 - 10:00</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div
-                  onClick={() => handleSelectSlot('Trần Thùy Anh', '10:00 - 11:30')}
-                  className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
-                >
-                  10:00 - 11:30
-                </div>
-                <div
-                  onClick={() => handleSelectSlot('Trần Thùy Anh', '11:30 - 12:00')}
-                  className="col-span-1 bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
-                >
-                  11:30 - 12:00
-                </div>
-              </div>
-            </div>
-
-            {/* Consultant 2: Nguyễn Ngọc Ánh */}
-            <div className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100">
-              <div className="flex items-start gap-3">
-                <img
-                  src="/images/consultant_ngoc_anh.png"
-                  alt="Nguyễn Ngọc Ánh"
-                  className="w-16 h-16 rounded-xl object-cover border border-emerald-100 flex-shrink-0"
-                />
-                <div className="flex-1">
-                  <h4 className="font-extrabold text-[15px] text-[#105e3f] leading-snug">
-                    Chuyên viên tư vấn Nguyễn Ngọc Ánh
-                  </h4>
-                  <p className="text-[12px] italic text-gray-500 font-medium my-0.5">
-                    {selectedBranch.name}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedConsultantKey('ngoc_anh');
-                      setStep('store_flow_5');
-                    }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#dbe5dd] text-slate-700 text-[11px] font-semibold hover:bg-[#ccd9cf] transition-colors cursor-pointer"
-                  >
-                    <span>Thông tin chuyên viên</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="border-b border-dashed border-gray-200 my-3.5" />
-
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                {(() => {
-                  const defaultDates = ['30/10', '06/11', '13/11', '20/11', '27/11', '29/11'];
-                  let dates = [...defaultDates];
-                  if (selectedDateTab2 && !dates.includes(selectedDateTab2)) {
-                    dates = [selectedDateTab2, ...dates];
-                  }
-                  return dates.map((dStr, idx) => {
-                    const isSelected = selectedDateTab2 === dStr;
-                    const yearStr = selectedDate?.split('/')[2] || `${calendarYear}`;
-                    return (
-                      <div
-                        key={idx}
-                        onClick={() => {
-                          setSelectedDateTab2(dStr);
-                          setSelectedDate(`${dStr}/${yearStr}`);
-                        }}
-                        className={`relative flex-shrink-0 w-[54px] py-1.5 rounded-xl text-center cursor-pointer transition-all ${
-                          isSelected ? 'bg-[#105e3f] text-white shadow-xs' : 'bg-[#e5e9e5] text-slate-800'
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white text-[#105e3f] flex items-center justify-center shadow-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5 fill-[#105e3f] text-white" />
-                          </div>
-                        )}
-                        <div className="font-extrabold text-[12px] leading-tight">{dStr}</div>
-                        <div className="text-[10px] opacity-80 leading-tight">{yearStr}</div>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-
-              <h5 className="font-extrabold text-[14px] text-[#105e3f] mt-2.5 mb-2.5">
-                {selectedDateTab2 ? `${selectedDateTab2}/${selectedDate?.split('/')[2] || calendarYear}` : (selectedDate || '30/10/2026')} - Buổi chiều ({getVietnameseDayOfWeek(selectedDateTab2 ? `${selectedDateTab2}/${selectedDate?.split('/')[2] || calendarYear}` : selectedDate)})
-              </h5>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">13:30 - 14:00</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">14:00 - 15:30</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div className="bg-[#e5e9e5] rounded-xl py-2 px-3 text-center opacity-70">
-                  <div className="font-bold text-[13px] text-slate-800 leading-tight">15:30 - 16:00</div>
-                  <div className="text-[10px] text-gray-500 font-medium">Hết số</div>
-                </div>
-                <div
-                  onClick={() => handleSelectSlot('Nguyễn Ngọc Ánh', '16:00 - 17:30')}
-                  className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
-                >
-                  16:00 - 17:30
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================== */}
-      {/* 7. STORE_FLOW_5: THÔNG TIN CHUYÊN VIÊN (Hình 5)                 */}
-      {/* ============================================================== */}
-      {step === 'store_flow_5' && (
-        <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <div className="px-5 pt-3 pb-3 flex-shrink-0 bg-[#105e3f] text-white shadow-xs z-10">
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setStep('store_flow_4')}
-                className="flex items-center gap-2.5 text-white font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                <span>
-                  {selectedConsultantKey === 'thuy_anh' ? 'Thông tin chuyên viên' : 'Thông tin nhân viên'}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onBackToHome}
-                className="text-white hover:opacity-80 transition-opacity p-1 cursor-pointer"
-                aria-label="Trang chủ"
-              >
-                <Home className="w-6 h-6 stroke-[2.4]" />
-              </button>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 pb-28 scroll-smooth">
-            <div className="flex items-center justify-between px-1 text-[11.5px] text-gray-500 font-medium">
-              <span>Vuốt xuống để xem chi tiết</span>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => toggleAllCards(false)} className="text-slate-600 hover:text-[#105e3f] hover:underline cursor-pointer">
-                  Thu gọn hết
-                </button>
-                <span>•</span>
-                <button type="button" onClick={() => toggleAllCards(true)} className="text-[#105e3f] font-bold hover:underline cursor-pointer">
-                  Xem thêm hết
-                </button>
-              </div>
-            </div>
-
-            {selectedConsultantKey === 'thuy_anh' && (
-              <>
-                <div className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100 flex items-start gap-3.5">
-                  <img
-                    src="/images/consultant_thuy_anh.png"
-                    alt="Trần Thùy Anh"
-                    className="w-20 h-20 rounded-2xl object-cover border-2 border-[#105e3f]/20 flex-shrink-0 shadow-sm"
-                  />
-                  <div className="flex-1">
-                    <div className="inline-block px-3 py-1 rounded-full bg-[#e8ede8] text-[#105e3f] font-extrabold text-[13px] mb-1 leading-snug">
-                      Chuyên viên tư vấn Trần Thùy Anh
-                    </div>
-                    <p className="text-[11.5px] italic text-gray-500 font-medium mb-1.5">
-                      Chuyên viên tư vấn chăm sóc da
-                    </p>
-                    <div className="text-[11px] text-slate-700 space-y-0.5 leading-snug">
-                      <div><span className="font-semibold text-slate-900">Giới tính:</span> Nữ</div>
-                      <div><span className="font-semibold text-slate-900">Chuyên môn:</span> Tư vấn skincare - Mỹ phẩm</div>
-                      <div><span className="font-semibold text-slate-900">Lĩnh vực:</span> Chăm sóc da, tư vấn sản phẩm, xây dựng routine skincare</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('lich')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Lịch tư vấn</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.lich ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.lich && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div>• Sáng Thứ 6</div>
-                      <div>• Địa điểm: Hasaki Store chi nhánh Quận 7</div>
-                      <div>• Hình thức: Tư vấn trực tiếp tại cửa hàng</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('daoTao')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Quá trình đào tạo</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.daoTao ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.daoTao && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1.5">
-                      <div>• 2023: Hoàn thành khóa học chăm sóc da cơ bản và phân loại da.</div>
-                      <div>• 2024: Hoàn thành khóa đào tạo tư vấn mỹ phẩm và xây dựng quy trình skincare.</div>
-                      <div>• 2025: Hoàn thành chương trình đào tạo chuyên sâu về thành phần mỹ phẩm và chăm sóc da cá nhân hóa.</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('congTac')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Quá trình công tác</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.congTac ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.congTac && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div className="font-bold text-slate-900 underline mb-1">Kinh nghiệm tư vấn khách hàng</div>
-                      <div>• 2024 – nay: Chuyên viên tư vấn chăm sóc da tại Hasaki.</div>
-                      <div>• Tư vấn sản phẩm phù hợp với loại da và nhu cầu của khách hàng.</div>
-                      <div>• Hỗ trợ khách hàng lựa chọn sản phẩm skincare và xây dựng routine chăm sóc da.</div>
-                      <div>• Theo dõi phản hồi của khách hàng về sản phẩm đã sử dụng.</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('chuyenMon')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Chuyên môn</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.chuyenMon ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.chuyenMon && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div>• Phân tích nhu cầu chăm sóc da.</div>
-                      <div>• Tư vấn sản phẩm skincare.</div>
-                      <div>• Xây dựng routine chăm sóc da.</div>
-                      <div>• Tư vấn thành phần mỹ phẩm.</div>
-                      <div>• Hỗ trợ khách hàng lựa chọn sản phẩm phù hợp.</div>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {selectedConsultantKey === 'ngoc_anh' && (
-              <>
-                <div className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100 flex items-start gap-3.5">
-                  <img
-                    src="/images/consultant_ngoc_anh.png"
-                    alt="Nguyễn Ngọc Ánh"
-                    className="w-20 h-20 rounded-2xl object-cover border-2 border-[#105e3f]/20 flex-shrink-0 shadow-sm"
-                  />
-                  <div className="flex-1">
-                    <div className="inline-block px-3 py-1 rounded-full bg-[#e8ede8] text-[#105e3f] font-extrabold text-[13px] mb-1 leading-snug">
-                      Chuyên viên tư vấn Nguyễn Ngọc Ánh
-                    </div>
-                    <p className="text-[11.5px] italic text-gray-500 font-medium mb-1.5">
-                      Chuyên viên tư vấn mỹ phẩm & chăm sóc da
-                    </p>
-                    <div className="text-[11px] text-slate-700 space-y-0.5 leading-snug">
-                      <div><span className="font-semibold text-slate-900">Giới tính:</span> Nữ</div>
-                      <div><span className="font-semibold text-slate-900">Chuyên môn:</span> Tư vấn mỹ phẩm – Chăm sóc da</div>
-                      <div><span className="font-semibold text-slate-900">Lĩnh vực:</span> Da dầu, da mụn, phục hồi da và lựa chọn sản phẩm skincare</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('lich')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Lịch tư vấn</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.lich ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.lich && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div>• Chiều Thứ 6</div>
-                      <div>• Địa điểm: Hasaki Store chi nhánh Quận 7</div>
-                      <div>• Hình thức: Tư vấn trực tiếp tại cửa hàng</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('daoTao')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Quá trình đào tạo</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.daoTao ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.daoTao && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1.5">
-                      <div>• 2022: Hoàn thành khóa học kiến thức cơ bản về da và mỹ phẩm.</div>
-                      <div>• 2023: Hoàn thành chương trình đào tạo tư vấn chăm sóc da dầu và da mụn.</div>
-                      <div>• 2024: Hoàn thành khóa học về thành phần mỹ phẩm và sản phẩm phục hồi da.</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('congTac')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Quá trình công tác</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.congTac ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.congTac && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div className="font-bold text-slate-900 underline mb-1">Kinh nghiệm tư vấn khách hàng</div>
-                      <div>• 2023 – nay: Chuyên viên tư vấn mỹ phẩm tại Hasaki.</div>
-                      <div>• Tư vấn sản phẩm phù hợp với tình trạng da và nhu cầu của khách hàng.</div>
-                      <div>• Hỗ trợ khách hàng lựa chọn sản phẩm chăm sóc da dầu, da mụn và da nhạy cảm.</div>
-                      <div>• Hướng dẫn khách hàng sử dụng sản phẩm theo routine skincare.</div>
-                      <div>• Theo dõi phản hồi và hỗ trợ khách hàng sau khi mua sản phẩm.</div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-100">
-                  <div onClick={() => toggleCard('chuyenMon')} className="bg-[#105e3f] text-white font-bold text-[14px] px-4 py-2.5 flex items-center justify-between cursor-pointer">
-                    <span>Chuyên môn</span>
-                    <span className="text-[11px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">{cardExpanded.chuyenMon ? 'Thu gọn ▲' : 'Xem thêm ▼'}</span>
-                  </div>
-                  {cardExpanded.chuyenMon && (
-                    <div className="bg-white p-3.5 px-4 text-[12.5px] text-slate-700 space-y-1">
-                      <div>• Tư vấn chăm sóc da dầu và da mụn.</div>
-                      <div>• Tư vấn sản phẩm phục hồi da.</div>
-                      <div>• Phân tích thành phần mỹ phẩm.</div>
-                      <div>• Xây dựng routine skincare cá nhân hóa.</div>
-                      <div>• Hỗ trợ khách hàng lựa chọn sản phẩm phù hợp.</div>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            <div className="pt-2 pb-6">
-              <button
-                type="button"
-                onClick={() => setStep('store_flow_4')}
-                className="w-full py-3.5 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-bold text-[14px] shadow-sm transition-all cursor-pointer text-center"
-              >
-                Đặt lịch theo khung giờ chuyên viên
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================== */}
-      {/* 8. CLINIC_FLOW_2: CHỌN CHI NHÁNH HASAKI CLINIC & SPA            */}
+      {/* 3. CLINIC_FLOW_2: CHỌN CHI NHÁNH HASAKI CLINIC & SPA            */}
       {/* ============================================================== */}
       {step === 'clinic_flow_2' && (
         <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -1386,7 +595,7 @@ export default function ScreenDatLich({
               <div className="flex items-center justify-between">
                 <button
                   type="button"
-                  onClick={() => setStep('store_flow_1')}
+                  onClick={() => setStep('initial_1')}
                   className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
@@ -1624,7 +833,7 @@ export default function ScreenDatLich({
                   </p>
                   <button
                     type="button"
-                    onClick={() => handleViewDoctorProfile('bs_nam')}
+                    onClick={() => handleViewDoctorProfile('bs_nam', 'clinic_flow_4')}
                     className="inline-flex items-center gap-1 px-2.5 py-1 mt-1 rounded-full bg-[#dbe5dd] text-slate-700 text-[11px] font-semibold hover:bg-[#ccd9cf] transition-colors cursor-pointer"
                   >
                     <span>Thông tin bác sĩ</span>
@@ -1636,7 +845,7 @@ export default function ScreenDatLich({
               <div className="border-b border-dashed border-gray-200 my-3.5" />
 
               <h5 className="font-extrabold text-[13.5px] text-[#105e3f] mb-2">
-                Khung giờ khám tại Clinic (31/10/2026):
+                Khung giờ khám tại Clinic ({selectedDate}):
               </h5>
 
               <div className="grid grid-cols-2 gap-2.5">
@@ -1690,7 +899,7 @@ export default function ScreenDatLich({
                   </p>
                   <button
                     type="button"
-                    onClick={() => handleViewDoctorProfile('bs_chi')}
+                    onClick={() => handleViewDoctorProfile('bs_chi', 'clinic_flow_4')}
                     className="inline-flex items-center gap-1 px-2.5 py-1 mt-1 rounded-full bg-[#dbe5dd] text-slate-700 text-[11px] font-semibold hover:bg-[#ccd9cf] transition-colors cursor-pointer"
                   >
                     <span>Thông tin bác sĩ</span>
@@ -1702,7 +911,7 @@ export default function ScreenDatLich({
               <div className="border-b border-dashed border-gray-200 my-3.5" />
 
               <h5 className="font-extrabold text-[13.5px] text-[#105e3f] mb-2">
-                Khung giờ khám tại Clinic (31/10/2026):
+                Khung giờ khám tại Clinic ({selectedDate}):
               </h5>
 
               <div className="grid grid-cols-2 gap-2.5">
@@ -1842,14 +1051,14 @@ export default function ScreenDatLich({
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h5 className="font-extrabold text-[13.5px] text-[#105e3f]">
-                      Tự động chỉ định người tư vấn
+                      Tự động chỉ định Bác sĩ Clinic
                     </h5>
                     <span className="text-[11px] font-extrabold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
                       0đ Miễn phí
                     </span>
                   </div>
                   <p className="text-[12px] text-slate-700 mt-1 leading-snug">
-                    Hệ thống sẽ tự động chỉ định ngẫu nhiên Bác sĩ Da liễu hoặc Chuyên viên tư vấn Hasaki có lịch trực phù hợp vào ngày <strong className="text-[#105e3f]">{selectedDate}</strong>.
+                    Hệ thống sẽ tự động chỉ định ngẫu nhiên Bác sĩ Da liễu Hasaki Clinic có lịch trực phù hợp vào ngày <strong className="text-[#105e3f]">{selectedDate}</strong>.
                   </p>
                 </div>
               </div>
@@ -1957,7 +1166,7 @@ export default function ScreenDatLich({
                   className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
-                  <span>Chọn chuyên viên/bác sĩ</span>
+                  <span>Chọn bác sĩ Hasaki Clinic</span>
                 </button>
 
                 <button
@@ -1979,7 +1188,7 @@ export default function ScreenDatLich({
                   type="text"
                   value={doctorSearch}
                   onChange={(e) => setDoctorSearch(e.target.value)}
-                  placeholder="Tìm kiếm chuyên viên/bác sĩ"
+                  placeholder="Tìm kiếm bác sĩ Hasaki Clinic"
                   className="w-full text-[13px] bg-transparent outline-none text-slate-800 placeholder-gray-400 font-medium"
                 />
                 <Mic className="w-4 h-4 text-gray-500 ml-2 cursor-pointer flex-shrink-0" />
@@ -2556,7 +1765,7 @@ export default function ScreenDatLich({
             <div className="flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => setStep('store_flow_4')}
+                onClick={() => setStep(confirmReturnStep || 'clinic_flow_4')}
                 className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
@@ -2703,7 +1912,7 @@ export default function ScreenDatLich({
           <div className="bg-white p-4 shadow-lg rounded-t-3xl border-t border-gray-100 flex-shrink-0 z-20 flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setStep('store_flow_2')}
+              onClick={() => setStep('clinic_flow_2')}
               className="flex-1 py-3.5 px-4 rounded-full bg-[#bcbec0] hover:bg-[#abaeaf] active:scale-98 text-slate-900 font-bold text-[14px] transition-all cursor-pointer text-center"
             >
               Thêm dịch vụ
@@ -2850,7 +2059,7 @@ export default function ScreenDatLich({
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setStep('store_flow_2')}
+                onClick={() => setStep('clinic_flow_2')}
                 className="flex-1 py-3.5 px-4 rounded-full bg-[#bcbec0] hover:bg-[#abaeaf] active:scale-98 text-slate-900 font-bold text-[14px] transition-all cursor-pointer text-center"
               >
                 Thêm dịch vụ
@@ -2916,17 +2125,17 @@ export default function ScreenDatLich({
                 <span>Theo lịch hẹn</span>
               </button>
 
-              {/* Option 2: Theo Cửa hàng / Clinic */}
+              {/* Option 2: Theo Clinic */}
               <button
                 type="button"
                 onClick={() => {
                   setShowOptionModal(false);
-                  setStep('store_flow_1');
+                  setStep('clinic_flow_2');
                 }}
                 className="w-full py-3.5 px-4 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all cursor-pointer"
               >
-                <Store className="w-4 h-4 stroke-[2.4]" />
-                <span>Theo Cửa hàng / Clinic</span>
+                <Stethoscope className="w-4 h-4 stroke-[2.4]" />
+                <span>Theo Clinic</span>
               </button>
 
               {/* Option 3: Theo ngày */}
@@ -2942,7 +2151,7 @@ export default function ScreenDatLich({
                 <span>Theo ngày</span>
               </button>
 
-              {/* Option 4: Theo Bác sĩ / KTV */}
+              {/* Option 4: Theo Bác sĩ */}
               <button
                 type="button"
                 onClick={() => {
@@ -2952,7 +2161,7 @@ export default function ScreenDatLich({
                 className="w-full py-3.5 px-4 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all cursor-pointer"
               >
                 <UserCheck className="w-4 h-4 stroke-[2.4]" />
-                <span>Theo Bác sĩ / KTV</span>
+                <span>Theo Bác sĩ</span>
               </button>
             </div>
           </div>

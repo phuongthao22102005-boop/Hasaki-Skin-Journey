@@ -719,7 +719,7 @@ export default function ScreenBangGiaDichVu({
                 }}
                 className="w-full py-3 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-bold text-[13.5px] shadow-sm transition-all cursor-pointer text-center"
               >
-                Đặt lịch tư vấn miễn phí ngay
+                Đặt lịch khám & soi da tại Clinic
               </button>
               <button
                 type="button"
