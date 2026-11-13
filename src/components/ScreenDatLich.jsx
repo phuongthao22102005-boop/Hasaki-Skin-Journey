@@ -28,8 +28,69 @@ import {
   ChevronDown,
   CalendarCheck,
   FileText,
-  Receipt
+  Receipt,
+  Activity
 } from 'lucide-react';
+
+// 4 Clinical Services as requested:
+// 1. Điều trị mụn và các vấn đề da
+// 2. Điều trị sẹo và tái tạo da
+// 3. Điều trị sắc tố da
+// 4. Trẻ hóa và dưỡng sáng da
+export const CLINIC_SERVICES = [
+  {
+    id: 'dieu-tri-mun',
+    number: 1,
+    title: 'Điều trị mụn và các vấn đề da',
+    category: 'MỤN & BÃ NHỜN',
+    badge: 'Phổ biến nhất',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    description: 'Khám da liễu chuẩn Y khoa, lấy nhân mụn vô khuẩn, peel da sinh học BHA gom cồi, chiếu ánh sáng sinh học Blue Light diệt khuẩn và kiềm dầu.',
+    highlights: ['Lấy nhân mụn Y khoa 100% vô khuẩn', 'Peel BHA gom cồi & sạch sâu bã nhờn', 'Chiếu ánh sáng Blue Light diệt vi khuẩn P.Acnes'],
+    doctors: 'BS. CKI Vũ Hoài Nam & BS. CKI Lê Thị Mai Chi',
+    price: '0đ (Khám da miễn phí)',
+    duration: '60 - 90 phút'
+  },
+  {
+    id: 'dieu-tri-seo',
+    number: 2,
+    title: 'Điều trị sẹo và tái tạo da',
+    category: 'SẸO RỖ & TÁI TẠO',
+    badge: 'Công nghệ cao',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    description: 'Bóc tách đáy sẹo xơ cứng lâu năm, Laser vi điểm Fractional CO2 đa tầng, kích thích tăng sinh mạng lưới collagen & elastin phục hồi nền da phẳng mịn.',
+    highlights: ['Laser vi điểm Fractional CO2 thế hệ mới', 'Bóc tách cắt đứt đáy sẹo xơ cứng', 'Tái sinh collagen & phục hồi biểu bì'],
+    doctors: 'BS. CKI Vũ Hoài Nam',
+    price: '0đ (Khám da miễn phí)',
+    duration: '75 - 90 phút'
+  },
+  {
+    id: 'dieu-tri-sac-to',
+    number: 3,
+    title: 'Điều trị sắc tố da',
+    category: 'NÁM & TÀN NHANG',
+    badge: 'Hiệu quả cao',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
+    description: 'Laser Toning xung kép phá vỡ hắc sắc tố Melanin tầng sâu thành các vi hạt nhỏ để đào thải tự nhiên, kết hợp điện di lạnh Tranexamic Acid mờ nám và đốm nâu.',
+    highlights: ['Laser Toning phá vỡ hắc sắc tố Melanin', 'Điện di tinh chất Tranexamic Acid / Arbutin', 'Mờ nám mảng, tàn nhang & đốm nâu'],
+    doctors: 'BS. CKI Lê Thị Mai Chi & BS. Trần Khánh Linh',
+    price: '0đ (Khám da miễn phí)',
+    duration: '60 phút'
+  },
+  {
+    id: 'tre-hoa-da',
+    number: 4,
+    title: 'Trẻ hóa và dưỡng sáng da',
+    category: 'CĂNG BÓNG & TRẺ HÓA',
+    badge: 'Liệu trình Hot',
+    badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+    description: 'Cấy vi điểm Meso Cocktail HA đa tầng cấp ẩm tầng sâu + B5 phục hồi, điện di tế bào gốc thực vật, nâng cơ săn chắc, mờ nhăn và se khít lỗ chân lông.',
+    highlights: ['Cấy Meso vi điểm Cocktail HA đa tầng', 'Điện di tế bào gốc thực vật căng bóng da', 'Nâng cơ săn chắc & se khít lỗ chân lông'],
+    doctors: 'ThS. BS. Nguyễn Thu Minh & BS. CKI Lê Thị Mai Chi',
+    price: '0đ (Khám da miễn phí)',
+    duration: '60 - 75 phút'
+  }
+];
 
 export default function ScreenDatLich({ 
   user = { name: 'Nguyễn Văn A' }, 
@@ -41,20 +102,35 @@ export default function ScreenDatLich({
   onNavigateInvoice
 }) {
   // Navigation states:
-  // 'initial_1'      : Hình 1 ban đầu (Chọn hồ sơ)
-  // 'initial_3'      : Hình 3 ban đầu (Theo lịch hẹn)
-  // 'clinic_flow_2'  : Chọn chi nhánh Hasaki Clinic & Spa
-  // 'clinic_flow_3'  : Chọn ngày khám Clinic
-  // 'clinic_flow_4'  : Chọn Bác sĩ & Khung giờ Clinic
-  // 'by_date_1'      : Đặt lịch theo ngày (Lịch chọn ngày + Khung giờ khả dụng)
-  // 'by_doctor_1'    : Danh sách Bác sĩ Hasaki Clinic
-  // 'by_doctor_2'    : Chọn ngày & giờ khám với Bác sĩ đã chọn
-  // 'doctor_profile' : Hồ sơ chi tiết Bác sĩ Hasaki Clinic
-  // 'confirm_step_1' : Chọn thông tin tư vấn (Hình 1)
-  // 'confirm_step_2' : Thông tin đặt tư vấn (Hình 2 - Miễn phí 0đ)
+  // 'initial_1'             : Hình 1 ban đầu (Chọn hồ sơ)
+  // 'initial_3'             : Hình 3 ban đầu (Theo lịch hẹn)
+  // 'clinic_flow_2'         : Chọn chi nhánh Hasaki Clinic & Spa
+  // 'clinic_service_select' : Chọn 1 trong 4 dịch vụ Clinic
+  // 'clinic_flow_3'         : Chọn ngày khám Clinic
+  // 'clinic_flow_4'         : Chọn Bác sĩ & Khung giờ Clinic
+  // 'by_date_1'             : Đặt lịch theo ngày (Lịch chọn ngày + Khung giờ khả dụng)
+  // 'by_doctor_1'           : Danh sách Bác sĩ Hasaki Clinic
+  // 'by_doctor_2'           : Chọn ngày & giờ khám với Bác sĩ đã chọn
+  // 'doctor_profile'        : Hồ sơ chi tiết Bác sĩ Hasaki Clinic
+  // 'confirm_step_1'        : Chọn thông tin tư vấn (Hình 1)
+  // 'confirm_step_2'        : Thông tin đặt tư vấn (Hình 2 - Miễn phí 0đ)
   const [step, setStep] = useState('initial_1');
   const [confirmReturnStep, setConfirmReturnStep] = useState('clinic_flow_4');
+  const [serviceReturnStep, setServiceReturnStep] = useState('clinic_flow_2');
   const [showOptionModal, setShowOptionModal] = useState(false);
+
+  // Selected Service
+  const [selectedServiceId, setSelectedServiceId] = useState('dieu-tri-mun');
+  const currentServiceObj = CLINIC_SERVICES.find(s => s.id === selectedServiceId) || CLINIC_SERVICES[0];
+  const selectedServiceTitle = currentServiceObj.title;
+
+  const handleSelectService = (srv) => {
+    setSelectedServiceId(srv.id);
+    setCurrentBooking(prev => ({
+      ...prev,
+      serviceType: srv.title
+    }));
+  };
 
   // Selected branch & search
   const [selectedBranch, setSelectedBranch] = useState({
@@ -129,7 +205,7 @@ export default function ScreenDatLich({
     date: '31/10/2026',
     time: '09:30 - 10:30',
     consultant: 'BS. CKI Vũ Hoài Nam',
-    serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
+    serviceType: 'Điều trị mụn và các vấn đề da',
     hasVoucher: false,
     voucherCode: '',
     price: 0
@@ -367,7 +443,7 @@ export default function ScreenDatLich({
       date: date || '31/10/2026',
       time: timeSlot || '09:30 - 10:30',
       consultant: consultantName || 'BS. CKI Vũ Hoài Nam',
-      serviceType: serviceTypeOverride || 'TƯ VẤN & KHÁM DA TẠI CLINIC',
+      serviceType: serviceTypeOverride || selectedServiceTitle || 'Điều trị mụn và các vấn đề da',
       hasVoucher: false,
       voucherCode: '',
       price: 0
@@ -382,22 +458,22 @@ export default function ScreenDatLich({
       {
         doctor: 'BS. CKI Vũ Hoài Nam',
         branch: 'Hasaki Clinic Quận 7',
-        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
+        serviceType: selectedServiceTitle
       },
       {
         doctor: 'BS. CKI Lê Thị Mai Chi',
         branch: 'Hasaki Clinic Tân Bình',
-        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
+        serviceType: selectedServiceTitle
       },
       {
         doctor: 'BS. Trần Khánh Linh',
         branch: 'Hasaki Clinic Quận 7',
-        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
+        serviceType: selectedServiceTitle
       },
       {
         doctor: 'ThS. BS. Nguyễn Thu Minh',
         branch: 'Hasaki Clinic Quận 10',
-        serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC'
+        serviceType: selectedServiceTitle
       }
     ];
     const assigned = randomPool[Math.floor(Math.random() * randomPool.length)];
@@ -422,7 +498,7 @@ export default function ScreenDatLich({
       date: selectedDate || '30/10/2026',
       time: slotTime || '11:30 - 12:30',
       consultant: currentDoc.name,
-      serviceType: 'TƯ VẤN & KHÁM DA TẠI CLINIC',
+      serviceType: selectedServiceTitle,
       hasVoucher: false,
       voucherCode: '',
       price: currentDoc.price === 'MIỄN PHÍ' || currentDoc.price === '0đ (Miễn phí)' ? '0đ (Miễn phí)' : (currentDoc.price || 0)
@@ -634,7 +710,8 @@ export default function ScreenDatLich({
                 key={b.id}
                 onClick={() => {
                   setSelectedBranch(b);
-                  setStep('clinic_flow_3');
+                  setServiceReturnStep('clinic_flow_2');
+                  setStep('clinic_service_select');
                 }}
                 className="bg-white rounded-2xl p-4 shadow-xs border border-gray-100 flex items-center justify-between cursor-pointer hover:border-[#105e3f] hover:shadow-md active:scale-[0.99] transition-all group"
               >
@@ -659,6 +736,191 @@ export default function ScreenDatLich({
       )}
 
       {/* ============================================================== */}
+      {/* 4. CLINIC_SERVICE_SELECT: CHỌN DỊCH VỤ CLINIC (4 Dịch vụ)      */}
+      {/* ============================================================== */}
+      {step === 'clinic_service_select' && (
+        <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#eff4ef]">
+          {/* Header */}
+          <div className="flex-shrink-0 bg-white shadow-xs z-10">
+            <div className="px-5 pt-3 pb-3">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(serviceReturnStep || 'clinic_flow_2')}
+                  className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
+                >
+                  <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
+                  <span>Chọn dịch vụ điều trị</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onBackToHome}
+                  className="text-[#105e3f] hover:opacity-80 transition-opacity p-1 cursor-pointer"
+                  aria-label="Trang chủ"
+                >
+                  <Home className="w-6 h-6 stroke-[2.4]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Context Sub-bar */}
+            <div className="px-5 py-2.5 bg-emerald-50 border-t border-emerald-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[12px] font-bold text-[#105e3f]">
+                  {selectedBranch?.name || 'Hasaki Clinic & Spa'}
+                </span>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[10.5px]">
+                4 Dịch vụ Y Khoa
+              </span>
+            </div>
+          </div>
+
+          {/* Service Cards List */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3.5 pb-28 scroll-smooth">
+            {/* Clinical banner */}
+            <div className="bg-gradient-to-r from-[#105e3f] to-[#177a53] text-white rounded-2xl p-3.5 shadow-sm flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Stethoscope className="w-4.5 h-4.5 text-white" />
+              </div>
+              <div className="flex-1 text-[12px] leading-relaxed">
+                <span className="font-extrabold block text-[13px] text-emerald-100 mb-0.5">
+                  Khám & Soi Da Đa Tầng Miễn Phí (0đ)
+                </span>
+                100% Bác sĩ Da liễu trực tiếp thăm khám, soi da và tư vấn phác đồ điều trị chuyên biệt cho từng khách hàng.
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-1 pt-1">
+              <span className="text-[13px] font-extrabold text-slate-800 uppercase tracking-wide">
+                Danh mục dịch vụ Clinic
+              </span>
+              <span className="text-[11px] text-gray-500 font-medium">
+                Chạm để chọn dịch vụ
+              </span>
+            </div>
+
+            {CLINIC_SERVICES.map((srv) => {
+              const isSelected = selectedServiceId === srv.id;
+              return (
+                <div
+                  key={srv.id}
+                  onClick={() => handleSelectService(srv)}
+                  className={`bg-white rounded-2xl p-4 transition-all cursor-pointer relative shadow-xs ${
+                    isSelected 
+                      ? 'border-2 border-[#105e3f] ring-2 ring-emerald-500/20 bg-emerald-50/20' 
+                      : 'border border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  {/* Top row: Number, Title, Badge & Radio Check */}
+                  <div className="flex items-start justify-between gap-2.5 mb-2">
+                    <div className="flex items-start gap-2.5 flex-1 min-w-0">
+                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-[13px] flex-shrink-0 shadow-2xs ${
+                        isSelected ? 'bg-[#105e3f] text-white' : 'bg-gray-100 text-slate-700'
+                      }`}>
+                        {srv.number}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${srv.badgeColor}`}>
+                            {srv.badge}
+                          </span>
+                          <span className="text-[10.5px] text-gray-500 font-semibold">
+                            {srv.category}
+                          </span>
+                        </div>
+                        <h4 className={`font-extrabold text-[15px] leading-snug ${
+                          isSelected ? 'text-[#105e3f]' : 'text-slate-900'
+                        }`}>
+                          {srv.title}
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Radio Checkbox */}
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                      isSelected 
+                        ? 'bg-[#105e3f] text-white shadow-xs' 
+                        : 'border-2 border-gray-300 bg-white'
+                    }`}>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3.5]" />}
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-[12px] text-gray-600 leading-relaxed pl-9 mb-3">
+                    {srv.description}
+                  </p>
+
+                  {/* Highlights Tags */}
+                  <div className="pl-9 flex flex-wrap gap-1.5 mb-3">
+                    {srv.highlights.map((tag, tIdx) => (
+                      <span 
+                        key={tIdx} 
+                        className="px-2 py-0.5 rounded-full bg-[#eef3ef] text-slate-700 text-[10.5px] font-medium"
+                      >
+                        ✓ {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Doctor in charge */}
+                  <div className="pl-9 flex items-center gap-1.5 text-[11px] text-slate-600 mb-2.5">
+                    <Stethoscope className="w-3.5 h-3.5 text-[#105e3f] flex-shrink-0" />
+                    <span className="font-semibold text-slate-700">Phụ trách:</span>
+                    <span className="text-[#105e3f] font-bold truncate">{srv.doctors}</span>
+                  </div>
+
+                  {/* Card Bottom Meta */}
+                  <div className="border-t border-dashed border-gray-200 pt-2.5 mt-2 flex items-center justify-between text-[11.5px] pl-9">
+                    <div className="flex items-center gap-1 text-gray-500 font-medium">
+                      <Clock className="w-3.5 h-3.5 text-gray-400" />
+                      <span>{srv.duration}</span>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="font-extrabold text-emerald-700 text-[12.5px]">
+                        {srv.price}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bottom Floating Action Bar */}
+          <div className="bg-white p-4 shadow-lg rounded-t-3xl border-t border-gray-100 flex-shrink-0 z-20 space-y-2">
+            <div className="flex items-center justify-between px-1 text-[12px]">
+              <span className="text-gray-500 font-medium">Dịch vụ đã chọn:</span>
+              <span className="font-extrabold text-[#105e3f] text-right truncate max-w-[220px]">
+                {selectedServiceTitle}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (serviceReturnStep === 'confirm_step_1') {
+                  setStep('confirm_step_1');
+                } else if (serviceReturnStep === 'confirm_step_2') {
+                  setStep('confirm_step_2');
+                } else {
+                  setStep('clinic_flow_3');
+                }
+              }}
+              className="w-full py-3.5 px-4 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-bold text-[14px] shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>Tiếp tục đặt lịch</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
       {/* 9. CLINIC_FLOW_3: CHỌN NGÀY KHÁM CLINIC                        */}
       {/* ============================================================== */}
       {step === 'clinic_flow_3' && (
@@ -667,7 +929,7 @@ export default function ScreenDatLich({
             <div className="flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => setStep('clinic_flow_2')}
+                onClick={() => setStep('clinic_service_select')}
                 className="flex items-center gap-2.5 text-slate-900 font-extrabold text-[18px] hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5 stroke-[2.8]" />
@@ -854,19 +1116,19 @@ export default function ScreenDatLich({
                   <div className="text-[10px] text-gray-500">Hết số</div>
                 </div>
                 <div
-                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '09:30 - 10:30', selectedDate, selectedBranch.name, 'TƯ VẤN & KHÁM DA TẠI CLINIC')}
+                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '09:30 - 10:30', selectedDate, selectedBranch.name, selectedServiceTitle)}
                   className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
                 >
                   09:30 - 10:30
                 </div>
                 <div
-                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '10:30 - 12:00', selectedDate, selectedBranch.name, 'TƯ VẤN & KHÁM DA TẠI CLINIC')}
+                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '10:30 - 12:00', selectedDate, selectedBranch.name, selectedServiceTitle)}
                   className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
                 >
                   10:30 - 12:00
                 </div>
                 <div
-                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '14:30 - 16:00', selectedDate, selectedBranch.name, 'TƯ VẤN & KHÁM DA TẠI CLINIC')}
+                  onClick={() => handleSelectSlot('BS. CKI Vũ Hoài Nam', '14:30 - 16:00', selectedDate, selectedBranch.name, selectedServiceTitle)}
                   className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
                 >
                   14:30 - 16:00
@@ -924,13 +1186,13 @@ export default function ScreenDatLich({
                   <div className="text-[10px] text-gray-500">Hết số</div>
                 </div>
                 <div
-                  onClick={() => handleSelectSlot('BS. CKI Lê Thị Mai Chi', '14:00 - 15:30', selectedDate, selectedBranch.name, 'TƯ VẤN & KHÁM DA TẠI CLINIC')}
+                  onClick={() => handleSelectSlot('BS. CKI Lê Thị Mai Chi', '14:00 - 15:30', selectedDate, selectedBranch.name, selectedServiceTitle)}
                   className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
                 >
                   14:00 - 15:30
                 </div>
                 <div
-                  onClick={() => handleSelectSlot('BS. CKI Lê Thị Mai Chi', '15:30 - 17:00', selectedDate, selectedBranch.name, 'TƯ VẤN & KHÁM DA TẠI CLINIC')}
+                  onClick={() => handleSelectSlot('BS. CKI Lê Thị Mai Chi', '15:30 - 17:00', selectedDate, selectedBranch.name, selectedServiceTitle)}
                   className="bg-[#105e3f] hover:bg-[#0c4a31] active:scale-95 text-white rounded-xl py-2.5 px-3 text-center cursor-pointer shadow-xs transition-all flex items-center justify-center font-extrabold text-[13px]"
                 >
                   15:30 - 17:00
@@ -1841,7 +2103,7 @@ export default function ScreenDatLich({
               </div>
 
               {/* Row 4: Chuyên viên tư vấn / Bác sĩ */}
-              <div className="pt-3 flex items-center justify-between">
+              <div className="py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#105e3f] flex-shrink-0">
                     <Stethoscope className="w-5 h-5 stroke-[2.4]" />
@@ -1857,6 +2119,36 @@ export default function ScreenDatLich({
                 </div>
                 <div className="w-6 h-6 rounded-full bg-[#16a34a] text-white flex items-center justify-center shadow-xs flex-shrink-0">
                   <Check className="w-4 h-4 stroke-[3.5]" />
+                </div>
+              </div>
+
+              {/* Row 5: Dịch vụ khám & điều trị */}
+              <div className="pt-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#105e3f] flex-shrink-0">
+                    <Sparkles className="w-5 h-5 stroke-[2.4]" />
+                  </div>
+                  <div>
+                    <div className="text-[12px] text-slate-600 font-medium">Dịch vụ điều trị</div>
+                    <div className="font-extrabold text-[15px] text-[#105e3f] leading-snug">
+                      {currentBooking.serviceType}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setServiceReturnStep('confirm_step_1');
+                      setStep('clinic_service_select');
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-[#e8ede8] hover:bg-[#d5e2d5] text-[#105e3f] font-bold text-[11px] transition-colors cursor-pointer"
+                  >
+                    Đổi
+                  </button>
+                  <div className="w-6 h-6 rounded-full bg-[#16a34a] text-white flex items-center justify-center shadow-xs">
+                    <Check className="w-4 h-4 stroke-[3.5]" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1912,10 +2204,13 @@ export default function ScreenDatLich({
           <div className="bg-white p-4 shadow-lg rounded-t-3xl border-t border-gray-100 flex-shrink-0 z-20 flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setStep('clinic_flow_2')}
+              onClick={() => {
+                setServiceReturnStep('confirm_step_1');
+                setStep('clinic_service_select');
+              }}
               className="flex-1 py-3.5 px-4 rounded-full bg-[#bcbec0] hover:bg-[#abaeaf] active:scale-98 text-slate-900 font-bold text-[14px] transition-all cursor-pointer text-center"
             >
-              Thêm dịch vụ
+              Đổi dịch vụ
             </button>
             <button
               type="button"
@@ -2002,11 +2297,14 @@ export default function ScreenDatLich({
                   </span>
                   <button
                     type="button"
-                    onClick={() => setStep('confirm_step_1')}
-                    className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center p-1 hover:bg-red-600 transition-colors cursor-pointer"
-                    title="Xóa dịch vụ"
+                    onClick={() => {
+                      setServiceReturnStep('confirm_step_2');
+                      setStep('clinic_service_select');
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-[#e8ede8] hover:bg-[#d5e2d5] text-[#105e3f] text-[11px] font-bold transition-colors cursor-pointer"
+                    title="Đổi dịch vụ"
                   >
-                    <Trash2 className="w-3.5 h-3.5 stroke-[2.4]" />
+                    Đổi
                   </button>
                 </div>
 
@@ -2059,10 +2357,13 @@ export default function ScreenDatLich({
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setStep('clinic_flow_2')}
+                onClick={() => {
+                  setServiceReturnStep('confirm_step_2');
+                  setStep('clinic_service_select');
+                }}
                 className="flex-1 py-3.5 px-4 rounded-full bg-[#bcbec0] hover:bg-[#abaeaf] active:scale-98 text-slate-900 font-bold text-[14px] transition-all cursor-pointer text-center"
               >
-                Thêm dịch vụ
+                Đổi dịch vụ
               </button>
               <button
                 type="button"
@@ -2112,6 +2413,20 @@ export default function ScreenDatLich({
             </h3>
 
             <div className="space-y-3">
+              {/* Option: Theo dịch vụ điều trị (4 dịch vụ) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOptionModal(false);
+                  setServiceReturnStep('initial_1');
+                  setStep('clinic_service_select');
+                }}
+                className="w-full py-3.5 px-4 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 stroke-[2.4]" />
+                <span>Theo dịch vụ điều trị (4 dịch vụ)</span>
+              </button>
+
               {/* Option 1: Theo lịch hẹn */}
               <button
                 type="button"
@@ -2119,9 +2434,9 @@ export default function ScreenDatLich({
                   setShowOptionModal(false);
                   setStep('initial_3');
                 }}
-                className="w-full py-3.5 px-4 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] text-white font-bold text-[14px] flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all cursor-pointer"
+                className="w-full py-3 px-4 rounded-full bg-[#eef3ef] hover:bg-[#dbe7df] text-slate-800 font-bold text-[13.5px] flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
               >
-                <Calendar className="w-4 h-4 stroke-[2.4]" />
+                <Calendar className="w-4 h-4 stroke-[2.4] text-[#105e3f]" />
                 <span>Theo lịch hẹn</span>
               </button>
 
@@ -2189,6 +2504,12 @@ export default function ScreenDatLich({
               <div className="flex justify-between">
                 <span className="text-gray-500">Khách hàng:</span>
                 <span className="font-bold text-slate-900">{profileName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Dịch vụ:</span>
+                <span className="font-bold text-[#105e3f] text-right max-w-[200px] leading-tight">
+                  {bookingSuccessModal.serviceType}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Chuyên gia:</span>
