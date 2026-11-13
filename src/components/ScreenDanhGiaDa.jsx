@@ -452,6 +452,22 @@ export default function ScreenDanhGiaDa({ onBackToHome, onNavigateBooking, onNav
               <p className="text-[13.5px] leading-[20px] text-slate-700 max-w-[320px] font-medium">
                 Hãy trả lời chính xác các câu hỏi, những vấn đề bạn đang gặp phải để Hasaki cùng bạn tìm ra lộ trình cá nhân hóa! Việc trả lời sai có thể khiến bạn mất đi cơ hội này.
               </p>
+
+              {/* Warning AI disclaimer banner leading to booking */}
+              <div 
+                onClick={() => onNavigateBooking && onNavigateBooking()}
+                className="mt-3.5 p-3 rounded-2xl bg-amber-50/90 border border-amber-300 text-left flex items-start gap-2.5 cursor-pointer hover:bg-amber-100/90 transition-colors shadow-2xs group"
+              >
+                <AlertTriangle className="w-4.5 h-4.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="text-[12px] text-amber-900 leading-snug">
+                  <span className="font-extrabold text-amber-950">Lưu ý quan trọng: </span>
+                  Kết quả đến từ AI có thể không chính xác cho các trường hợp đặc biệt. Để hiểu rõ và đảm bảo chính xác hãy đặt lịch ngay cho chuyên gia để được thăm khám và hỗ trợ.
+                  <span className="block mt-1.5 font-bold text-[#105e3f] group-hover:underline flex items-center gap-1">
+                    <span>Đặt lịch ngay cho chuyên gia</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div className="w-full pt-6">
@@ -1118,6 +1134,39 @@ export default function ScreenDanhGiaDa({ onBackToHome, onNavigateBooking, onNav
               </div>
             </div>
 
+            {/* CẢNH BÁO QUAN TRỌNG VỀ AI & NÚT DẪN ĐẾN ĐẶT LỊCH */}
+            <div className="bg-gradient-to-r from-amber-50 via-orange-50/70 to-amber-50 rounded-2xl p-4 border-2 border-amber-300 shadow-xs space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-2xs mt-0.5">
+                  <AlertTriangle className="w-5 h-5 stroke-[2.5]" />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[11px] font-black uppercase text-amber-800 tracking-wider">
+                    Cảnh báo từ Chuyên khoa Da liễu Hasaki
+                  </span>
+                  <p className="text-[13px] text-amber-950 font-bold leading-relaxed">
+                    "Kết quả đến từ AI có thể không chính xác cho các trường hợp đặc biệt. Để hiểu rõ và đảm bảo chính xác hãy đặt lịch ngay cho chuyên gia để được thăm khám và hỗ trợ"
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateBooking) {
+                    onNavigateBooking();
+                  } else {
+                    setShowBookingModal(true);
+                  }
+                }}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#105e3f] to-[#167850] hover:bg-[#0c4e33] active:scale-[0.98] text-white font-extrabold text-[13.5px] shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <Calendar className="w-4 h-4 text-emerald-300" />
+                <span>Đặt lịch ngay cho chuyên gia</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
             {/* Ý kiến từ chuyên gia matching Hình 4 */}
             <div className="bg-white rounded-[22px] p-4 border border-emerald-900/[0.08] shadow-xs">
               <div className="flex items-center gap-2 mb-2">
@@ -1332,6 +1381,18 @@ export default function ScreenDanhGiaDa({ onBackToHome, onNavigateBooking, onNav
                 <p className="text-[#105e3f] bg-emerald-50 p-3 rounded-xl border border-emerald-100 font-medium">
                   {scoreDetailsData[selectedScoreCard].advice}
                 </p>
+              </div>
+
+              {/* Warning AI disclaimer leading to booking */}
+              <div 
+                onClick={() => {
+                  setSelectedScoreCard(null);
+                  if (onNavigateBooking) onNavigateBooking();
+                }}
+                className="p-2.5 rounded-xl bg-amber-50/90 border border-amber-300 text-amber-950 text-[11.5px] cursor-pointer hover:bg-amber-100 transition-colors flex items-center justify-between gap-2"
+              >
+                <span>⚠️ Kết quả đến từ AI có thể không chính xác cho các trường hợp đặc biệt.</span>
+                <span className="font-bold text-[#105e3f] underline whitespace-nowrap">Đặt lịch ngay &rarr;</span>
               </div>
             </div>
 
