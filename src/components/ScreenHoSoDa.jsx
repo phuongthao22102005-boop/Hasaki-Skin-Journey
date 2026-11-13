@@ -598,22 +598,6 @@ export default function ScreenHoSoDa({
       {viewMode === 'treatment_history' && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
           
-          {/* Breadcrumb banner linking to Homepage & Skin Profile hub */}
-          <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between text-[12px] shadow-2xs">
-            <div className="flex items-center gap-1.5 text-[#105e3f] font-bold">
-              <Clock className="w-4 h-4 text-[#105e3f]" />
-              <span>Lịch sử tư vấn &amp; điều trị</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setViewMode('function_hub')}
-              className="text-[#105e3f] font-extrabold hover:underline flex items-center gap-1 text-[11.5px] cursor-pointer"
-            >
-              <span>Xem 5 mục hồ sơ da</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
           {/* Header Banner: Tên khách hàng & Dịch vụ đang sử dụng */}
           <div className="bg-gradient-to-r from-[#105e3f] to-[#1e7e57] text-white rounded-3xl p-4.5 shadow-sm">
             <div className="flex items-center justify-between">

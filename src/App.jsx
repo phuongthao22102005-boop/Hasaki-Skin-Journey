@@ -329,6 +329,7 @@ export default function App() {
 
       {currentScreen === 'screen_hosoda' && (
         <ScreenHoSoDa 
+          key={hoSoDaInitialView}
           user={user}
           bookingSlips={bookingSlips}
           onUpdateUser={handleUpdateUser}
