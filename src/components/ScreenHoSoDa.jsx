@@ -29,7 +29,13 @@ import {
   Stethoscope, 
   Briefcase, 
   Globe, 
-  BadgeCheck
+  BadgeCheck,
+  Plus,
+  PlusCircle,
+  FolderPlus,
+  UserPlus,
+  ShieldAlert,
+  Info
 } from 'lucide-react';
 import { initialBookingSlips } from '../data/bookingHistoryData';
 
@@ -81,6 +87,105 @@ export default function ScreenHoSoDa({
       avatar: '/images/thao_avatar.jpg'
     };
   });
+
+  // Selection Modal state ("Bạn đã từng sử dụng dịch vụ tư vấn/chăm sóc da tại Hasaki?")
+  const [showModalSelection, setShowModalSelection] = useState(false);
+
+  // New user registration inputs (Dành cho người chưa có hồ sơ da)
+  const [newFormData, setNewFormData] = useState({
+    fullName: user?.name || '',
+    gender: user?.gender || 'Nữ',
+    birthDate: user?.birthDate || '2004-05-15',
+    phone: user?.phone || '',
+    email: user?.email || '',
+    cccd: user?.cccd || '',
+    address: user?.address || '',
+    skinType: 'Da hỗn hợp thiên dầu',
+    sensitivity: 'Nhạy cảm nhẹ (dễ đỏ khi thời tiết thay đổi)',
+    primaryConcern: 'Mụn ẩn & lỗ chân lông to',
+    careGoal: 'Kiềm dầu, phục hồi màng ẩm và sáng da',
+    currentProducts: 'Sữa rửa mặt dịu nhẹ, Serum B5, Kem chống nắng phổ rộng',
+    allergies: 'Cồn khô, hương liệu nồng'
+  });
+
+  const [newProfileError, setNewProfileError] = useState('');
+  const [newlyCreatedProfile, setNewlyCreatedProfile] = useState(null);
+  const [newProfileSaveSuccess, setNewProfileSaveSuccess] = useState(false);
+
+  const handleOpenCreationModal = () => {
+    setShowModalSelection(true);
+  };
+
+  const handleSelectExistingUser = () => {
+    setShowModalSelection(false);
+    setViewMode('function_hub');
+  };
+
+  const handleSelectNewUser = () => {
+    setShowModalSelection(false);
+    setNewProfileError('');
+    setViewMode('new_step1');
+  };
+
+  const handleContinueNewStep1 = (e) => {
+    if (e) e.preventDefault();
+    setNewProfileError('');
+
+    if (!newFormData.fullName.trim()) {
+      setNewProfileError('Vui lòng nhập họ và tên của bạn.');
+      return;
+    }
+    if (!newFormData.phone.trim()) {
+      setNewProfileError('Vui lòng nhập số điện thoại liên hệ.');
+      return;
+    }
+
+    setViewMode('new_step2');
+  };
+
+  const handleSaveNewProfile = (e) => {
+    if (e) e.preventDefault();
+
+    const randomSuffix = Math.floor(100000 + Math.random() * 900000);
+    const newCustomerCode = `HSK-${randomSuffix}`;
+
+    const completedProfile = {
+      fullName: newFormData.fullName.trim(),
+      gender: newFormData.gender,
+      birthDate: newFormData.birthDate || 'Chưa cập nhật',
+      phone: newFormData.phone.trim(),
+      email: newFormData.email.trim() || 'Chưa cập nhật',
+      cccd: newFormData.cccd.trim() || 'Chưa cập nhật',
+      address: newFormData.address.trim() || 'Chưa cập nhật',
+      customerCode: newCustomerCode,
+      skinType: newFormData.skinType,
+      sensitivity: newFormData.sensitivity,
+      primaryConcern: newFormData.primaryConcern,
+      careGoal: newFormData.careGoal,
+      currentProducts: newFormData.currentProducts || 'Chưa ghi nhận',
+      allergies: newFormData.allergies || 'Không có dị ứng đặc biệt',
+      createdAt: new Date().toLocaleDateString('vi-VN'),
+      status: 'Hồ sơ mới tạo - Đang chờ thăm khám',
+      avatar: '/images/customer_default_avatar.png'
+    };
+
+    setNewlyCreatedProfile(completedProfile);
+    setNewProfileSaveSuccess(true);
+    setTimeout(() => setNewProfileSaveSuccess(false), 4000);
+
+    if (onUpdateUser) {
+      onUpdateUser({
+        name: newFormData.fullName.trim(),
+        gender: newFormData.gender,
+        birthDate: newFormData.birthDate,
+        phone: newFormData.phone.trim(),
+        email: newFormData.email.trim(),
+        address: newFormData.address.trim()
+      });
+    }
+
+    setViewMode('new_profile_view');
+  };
 
   // Edit Mode state in "Thông tin hồ sơ"
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -270,6 +375,12 @@ export default function ScreenHoSoDa({
                 onBackToHome();
               } else if (viewMode === 'function_hub') {
                 setViewMode('profile_list');
+              } else if (viewMode === 'new_step1') {
+                setViewMode('profile_list');
+              } else if (viewMode === 'new_step2') {
+                setViewMode('new_step1');
+              } else if (viewMode === 'new_profile_view') {
+                setViewMode('profile_list');
               } else if (viewMode === 'treatment_history' && initialView === 'treatment_history') {
                 onBackToHome();
               } else {
@@ -287,6 +398,9 @@ export default function ScreenHoSoDa({
               {viewMode === 'progress_photos' && 'Hình ảnh chụp tiến trình'}
               {viewMode === 'booking_history' && 'Lịch sử đặt lịch'}
               {viewMode === 'profile_info' && 'Thông tin hồ sơ'}
+              {viewMode === 'new_step1' && 'Tạo hồ sơ da (Bước 1/2)'}
+              {viewMode === 'new_step2' && 'Khảo sát tình trạng da (Bước 2/2)'}
+              {viewMode === 'new_profile_view' && 'Hồ sơ da của tôi'}
             </span>
           </button>
 
@@ -325,11 +439,16 @@ export default function ScreenHoSoDa({
 
           <div className="flex items-center justify-between px-1 pt-1">
             <span className="font-extrabold text-[15px] text-slate-900">
-              Hồ sơ da đang hoạt động (1)
+              Hồ sơ khách hàng Hasaki Clinic
             </span>
-            <span className="text-[11.5px] text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              Đang trong phác đồ
-            </span>
+            <button
+              type="button"
+              onClick={handleOpenCreationModal}
+              className="text-[11.5px] text-[#105e3f] font-bold hover:underline flex items-center gap-1 cursor-pointer bg-white px-2.5 py-1 rounded-full border border-emerald-200 shadow-2xs"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Tạo hồ sơ mới</span>
+            </button>
           </div>
 
           {/* MAIN DEMO PROFILE CARD: TRỊNH PHƯƠNG THẢO */}
@@ -339,7 +458,7 @@ export default function ScreenHoSoDa({
           >
             <div className="absolute top-0 right-0 bg-[#105e3f] text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl uppercase tracking-wider flex items-center gap-1 shadow-xs">
               <Award className="w-3 h-3 text-amber-300" />
-              <span>Khách hàng VIP</span>
+              <span>Khách hàng VIP Clinic</span>
             </div>
 
             <div className="flex items-start gap-4">
@@ -349,7 +468,7 @@ export default function ScreenHoSoDa({
                   alt={profileData.fullName}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/scanned_face.png';
+                    e.target.src = '/images/customer_default_avatar.png';
                   }}
                   className="w-18 h-18 rounded-2xl object-cover border-2 border-emerald-500/40 shadow-xs flex-shrink-0"
                 />
@@ -402,7 +521,7 @@ export default function ScreenHoSoDa({
             {/* Click to choose functions button */}
             <div className="mt-4 pt-1 flex items-center justify-between">
               <span className="text-[12px] font-extrabold text-[#105e3f] flex items-center gap-1 group-hover:underline">
-                Bấm vào để chọn chức năng quản lý da
+                Bấm vào để chọn chức năng quản lý da (5 mục)
               </span>
               <div className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 text-[#105e3f] flex items-center justify-center group-hover:bg-[#105e3f] group-hover:text-white transition-all">
                 <ChevronRight className="w-4 h-4 stroke-[2.5]" />
@@ -410,16 +529,89 @@ export default function ScreenHoSoDa({
             </div>
           </div>
 
-          {/* Option to add new profile / help banner */}
+          {/* IF NEWLY CREATED PROFILE EXISTS: DISPLAY IT HERE */}
+          {newlyCreatedProfile && (
+            <div className="space-y-2 pt-2 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between px-1">
+                <span className="font-extrabold text-[15px] text-slate-900">
+                  Hồ sơ da của bạn (Mới tạo)
+                </span>
+                <span className="text-[11px] text-amber-700 font-bold bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                  Đang chờ khám
+                </span>
+              </div>
+
+              <div 
+                onClick={() => setViewMode('new_profile_view')}
+                className="bg-white rounded-3xl p-5 shadow-xs border-2 border-emerald-400/50 hover:border-emerald-600 transition-all cursor-pointer group active:scale-[0.99]"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#105e3f] flex-shrink-0">
+                    <User className="w-7 h-7" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-extrabold text-[16px] text-slate-900 group-hover:text-[#105e3f] transition-colors truncate">
+                        {newlyCreatedProfile.fullName}
+                      </h4>
+                      <span className="text-[10px] font-bold bg-emerald-100 text-[#105e3f] px-2 py-0.5 rounded-md">
+                        {newlyCreatedProfile.customerCode}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-slate-600 mt-1">
+                      Loại da: <strong className="text-[#105e3f]">{newlyCreatedProfile.skinType}</strong>
+                    </p>
+                    <p className="text-[11.5px] text-slate-500 truncate mt-0.5">
+                      Quan tâm: {newlyCreatedProfile.primaryConcern}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[12px] font-bold text-[#105e3f]">
+                  <span>Xem chi tiết hồ sơ vừa tạo</span>
+                  <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION DÀNH CHO NGƯỜI CHƯA CÓ HỒ SƠ DA */}
           <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setViewMode('function_hub')}
-              className="w-full py-3.5 rounded-full bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-bold text-[14px] shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Mở hồ sơ TRỊNH PHƯƠNG THẢO</span>
-            </button>
+            <div className="bg-gradient-to-br from-white to-[#f4f9f6] rounded-3xl p-5 border border-emerald-800/15 shadow-xs space-y-3.5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-[#105e3f] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                  <UserPlus className="w-6 h-6 stroke-[2.2]" />
+                </div>
+                <div>
+                  <h4 className="font-extrabold text-[15.5px] text-slate-900 leading-snug">
+                    Bạn chưa có hồ sơ da?
+                  </h4>
+                  <p className="text-[12.5px] text-slate-600 leading-relaxed mt-1 font-medium">
+                    Dành cho khách hàng chưa từng sử dụng dịch vụ tại Hasaki. Tạo hồ sơ da để làm khảo sát nhanh tình trạng da, lưu mục tiêu chăm sóc và sẵn sàng thăm khám chuyên sâu.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-1 flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleOpenCreationModal}
+                  className="w-full h-[50px] rounded-[16px] bg-white border-2 border-[#105e3f] text-[#105e3f] hover:bg-emerald-50 active:scale-98 font-extrabold text-[14.5px] tracking-wide shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4.5 h-4.5 stroke-[2.5]" />
+                  <span>TẠO HỒ SƠ DA MỚI</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setViewMode('function_hub')}
+                  className="w-full h-[46px] rounded-[16px] bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-bold text-[14px] shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-200" />
+                  <span>Mở hồ sơ TRỊNH PHƯƠNG THẢO</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1788,6 +1980,543 @@ export default function ScreenHoSoDa({
       )}
 
       {/* ============================================================== */}
+      {/* TẠO HỒ SƠ DA - BƯỚC 1/2: THÔNG TIN CÁ NHÂN (new_step1)         */}
+      {/* ============================================================== */}
+      {viewMode === 'new_step1' && (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
+          
+          {/* Progress Header */}
+          <div className="bg-white rounded-3xl p-4 shadow-xs border border-gray-100">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-extrabold text-[#105e3f] uppercase tracking-wider">
+                Bước 1 / 2
+              </span>
+              <span className="font-bold text-slate-500">
+                50% Hoàn thành
+              </span>
+            </div>
+            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-1/2 h-full bg-[#105e3f] rounded-full transition-all duration-300" />
+            </div>
+            <h3 className="font-extrabold text-[17px] text-slate-900 mt-3">
+              Thông tin cá nhân khách hàng
+            </h3>
+            <p className="text-[12px] text-slate-500 mt-0.5">
+              Vui lòng điền thông tin để Hasaki tạo mã định danh hồ sơ da liễu cho bạn.
+            </p>
+          </div>
+
+          {/* Form Fields Card */}
+          <div className="bg-white rounded-3xl p-5 shadow-xs border border-gray-100 space-y-4">
+            
+            {/* Họ và tên */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Họ và tên <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={newFormData.fullName}
+                onChange={(e) => {
+                  setNewFormData({ ...newFormData, fullName: e.target.value });
+                  setNewProfileError('');
+                }}
+                placeholder="Ví dụ: Nguyễn Văn A"
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14.5px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* Giới tính */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Giới tính <span className="text-rose-500">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {['Nữ', 'Nam'].map((g) => {
+                  const isSelected = newFormData.gender === g;
+                  return (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setNewFormData({ ...newFormData, gender: g })}
+                      className={`h-11 rounded-2xl border-2 font-extrabold text-[14px] transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                        isSelected 
+                          ? 'border-[#105e3f] bg-emerald-50 text-[#105e3f]' 
+                          : 'border-gray-200 bg-white text-slate-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border-2 border-[#105e3f] flex items-center justify-center ${isSelected ? 'bg-[#105e3f]' : 'bg-transparent'}`}>
+                        {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      </div>
+                      <span>{g}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Ngày sinh */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Ngày sinh
+              </label>
+              <input
+                type="date"
+                value={newFormData.birthDate}
+                onChange={(e) => setNewFormData({ ...newFormData, birthDate: e.target.value })}
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* Số điện thoại */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Số điện thoại liên hệ <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="tel"
+                value={newFormData.phone}
+                onChange={(e) => {
+                  setNewFormData({ ...newFormData, phone: e.target.value });
+                  setNewProfileError('');
+                }}
+                placeholder="Ví dụ: 0912 345 678"
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14.5px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                value={newFormData.email}
+                onChange={(e) => setNewFormData({ ...newFormData, email: e.target.value })}
+                placeholder="email@example.com"
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* CCCD / Định danh */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Số CCCD / Định danh (để lưu hồ sơ bệnh án)
+              </label>
+              <input
+                type="text"
+                value={newFormData.cccd}
+                onChange={(e) => setNewFormData({ ...newFormData, cccd: e.target.value })}
+                placeholder="Ví dụ: 079305012899"
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* Địa chỉ liên hệ */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                Địa chỉ hiện tại
+              </label>
+              <input
+                type="text"
+                value={newFormData.address}
+                onChange={(e) => setNewFormData({ ...newFormData, address: e.target.value })}
+                placeholder="Quận/Huyện, Tỉnh/TP..."
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* Error Message */}
+            {newProfileError && (
+              <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{newProfileError}</span>
+              </div>
+            )}
+
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setViewMode('profile_list')}
+              className="w-1/3 h-12 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[14px] transition-colors cursor-pointer"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={handleContinueNewStep1}
+              className="w-2/3 h-12 rounded-2xl bg-[#105e3f] hover:bg-[#0c4a31] text-white font-extrabold text-[14.5px] shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <span>Tiếp tục (Bước 2/2)</span>
+              <ChevronRight className="w-4.5 h-4.5 stroke-[2.5]" />
+            </button>
+          </div>
+
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* TẠO HỒ SƠ DA - BƯỚC 2/2: KHẢO SÁT TÌNH TRẠNG DA (new_step2)    */}
+      {/* ============================================================== */}
+      {viewMode === 'new_step2' && (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
+          
+          {/* Progress Header */}
+          <div className="bg-white rounded-3xl p-4 shadow-xs border border-gray-100">
+            <div className="flex items-center justify-between text-xs mb-2">
+              <span className="font-extrabold text-[#105e3f] uppercase tracking-wider">
+                Bước 2 / 2
+              </span>
+              <span className="font-bold text-emerald-700">
+                100% Sẵn sàng
+              </span>
+            </div>
+            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="w-full h-full bg-[#105e3f] rounded-full transition-all duration-300" />
+            </div>
+            <h3 className="font-extrabold text-[17px] text-slate-900 mt-3">
+              Khảo sát tình trạng da & Nhu cầu
+            </h3>
+            <p className="text-[12px] text-slate-500 mt-0.5">
+              Cung cấp đặc điểm nền da của bạn để chuẩn bị phác đồ chuẩn xác nhất.
+            </p>
+          </div>
+
+          {/* Skin Survey Form */}
+          <div className="bg-white rounded-3xl p-5 shadow-xs border border-gray-100 space-y-4">
+            
+            {/* 1. Loại da */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-2">
+                1. Loại da hiện tại của bạn:
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  'Da hỗn hợp thiên dầu',
+                  'Da dầu / Nhờn',
+                  'Da khô',
+                  'Da hỗn hợp thiên khô',
+                  'Da thường',
+                  'Da nhạy cảm'
+                ].map((type) => {
+                  const isSel = newFormData.skinType === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setNewFormData({ ...newFormData, skinType: type })}
+                      className={`p-2.5 rounded-2xl text-[12.5px] font-bold border-2 transition-all cursor-pointer text-left flex items-center justify-between ${
+                        isSel 
+                          ? 'border-[#105e3f] bg-emerald-50 text-[#105e3f]' 
+                          : 'border-gray-200 text-slate-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <span>{type}</span>
+                      {isSel && <Check className="w-4 h-4 stroke-[3] text-[#105e3f]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2. Mức độ nhạy cảm */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-2">
+                2. Mức độ nhạy cảm của da:
+              </label>
+              <div className="space-y-2">
+                {[
+                  'Khỏe mạnh, ít kích ứng',
+                  'Nhạy cảm nhẹ (dễ đỏ khi thời tiết thay đổi hoặc dùng acid mạnh)',
+                  'Rất nhạy cảm (dễ châm chích, ngứa rát với mỹ phẩm lạ)'
+                ].map((sen) => {
+                  const isSel = newFormData.sensitivity === sen;
+                  return (
+                    <button
+                      key={sen}
+                      type="button"
+                      onClick={() => setNewFormData({ ...newFormData, sensitivity: sen })}
+                      className={`w-full p-3 rounded-2xl text-[12.5px] font-bold border-2 transition-all cursor-pointer text-left flex items-center justify-between ${
+                        isSel 
+                          ? 'border-[#105e3f] bg-emerald-50 text-[#105e3f]' 
+                          : 'border-gray-200 text-slate-700 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="pr-2">{sen}</span>
+                      {isSel && <Check className="w-4 h-4 stroke-[3] text-[#105e3f] flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Mối quan tâm chính */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                3. Vấn đề da bạn lo lắng nhất hiện tại:
+              </label>
+              <input
+                type="text"
+                value={newFormData.primaryConcern}
+                onChange={(e) => setNewFormData({ ...newFormData, primaryConcern: e.target.value })}
+                placeholder="Ví dụ: Mụn ẩn, thâm mụn, lỗ chân lông to..."
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {['Mụn ẩn & viêm', 'Thâm đỏ PIE', 'Lỗ chân lông to', 'Nám & Tàn nhang', 'Sẹo rỗ'].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      if (!newFormData.primaryConcern.includes(tag)) {
+                        setNewFormData({
+                          ...newFormData,
+                          primaryConcern: newFormData.primaryConcern ? `${newFormData.primaryConcern}, ${tag}` : tag
+                        });
+                      }
+                    }}
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-[#105e3f] transition-colors cursor-pointer"
+                  >
+                    + {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. Mục tiêu chăm sóc */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                4. Mục tiêu chăm sóc da mong muốn:
+              </label>
+              <input
+                type="text"
+                value={newFormData.careGoal}
+                onChange={(e) => setNewFormData({ ...newFormData, careGoal: e.target.value })}
+                placeholder="Ví dụ: Sạch mụn, kiềm dầu, phục hồi màng ẩm..."
+                className="w-full h-12 px-4 rounded-2xl border-2 border-emerald-700/40 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {['Hết mụn', 'Kiềm dầu', 'Mờ thâm sáng da', 'Phục hồi màng ẩm', 'Căng bóng'].map((goal) => (
+                  <button
+                    key={goal}
+                    type="button"
+                    onClick={() => {
+                      if (!newFormData.careGoal.includes(goal)) {
+                        setNewFormData({
+                          ...newFormData,
+                          careGoal: newFormData.careGoal ? `${newFormData.careGoal}, ${goal}` : goal
+                        });
+                      }
+                    }}
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-[#105e3f] transition-colors cursor-pointer"
+                  >
+                    + {goal}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Sản phẩm đang sử dụng */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                5. Sản phẩm skincare bạn đang dùng hàng ngày:
+              </label>
+              <textarea
+                rows={2}
+                value={newFormData.currentProducts}
+                onChange={(e) => setNewFormData({ ...newFormData, currentProducts: e.target.value })}
+                placeholder="Sữa rửa mặt, Serum phục hồi B5, Kem chống nắng, Tẩy trang..."
+                className="w-full p-3 rounded-2xl border-2 border-emerald-700/40 text-[13.5px] text-slate-900 font-medium focus:outline-none focus:border-[#105e3f] focus:ring-2 focus:ring-[#105e3f]/20 bg-emerald-50/20"
+              />
+            </div>
+
+            {/* 6. Thành phần dị ứng */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-slate-700 mb-1.5">
+                6. Thành phần dị ứng / Kích ứng (nếu có):
+              </label>
+              <input
+                type="text"
+                value={newFormData.allergies}
+                onChange={(e) => setNewFormData({ ...newFormData, allergies: e.target.value })}
+                placeholder="Ví dụ: Cồn khô, hương liệu, tinh dầu tràm trà..."
+                className="w-full h-12 px-4 rounded-2xl border-2 border-rose-300 text-[14px] text-slate-900 font-medium focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-200 bg-rose-50/20"
+              />
+            </div>
+
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setViewMode('new_step1')}
+              className="w-1/3 h-12 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[14px] transition-colors cursor-pointer"
+            >
+              Quay lại
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveNewProfile}
+              className="w-2/3 h-12 rounded-2xl bg-[#105e3f] hover:bg-[#0c4a31] text-white font-extrabold text-[14.5px] shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Hoàn tất tạo hồ sơ da</span>
+            </button>
+          </div>
+
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* CHI TIẾT HỒ SƠ DA MỚI TẠO (new_profile_view)                   */}
+      {/* ============================================================== */}
+      {viewMode === 'new_profile_view' && newlyCreatedProfile && (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
+          
+          {/* Success Banner */}
+          <div className="bg-gradient-to-r from-[#105e3f] to-[#1e7e57] text-white rounded-3xl p-5 shadow-sm space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="w-7 h-7 rounded-full bg-emerald-400 text-[#105e3f] flex items-center justify-center font-bold">
+                ✓
+              </span>
+              <span className="text-[12px] font-extrabold uppercase tracking-wide text-emerald-200">
+                Tạo hồ sơ thành công
+              </span>
+            </div>
+            <h2 className="text-[20px] font-extrabold leading-tight">
+              {newlyCreatedProfile.fullName}
+            </h2>
+            <div className="flex items-center gap-2 text-xs text-emerald-100 font-mono">
+              <span>Mã ID: {newlyCreatedProfile.customerCode}</span>
+              <span>•</span>
+              <span>Ngày tạo: {newlyCreatedProfile.createdAt}</span>
+            </div>
+          </div>
+
+          {/* Personal Info Summary */}
+          <div className="bg-white rounded-3xl p-5 shadow-xs border border-gray-100 space-y-3">
+            <h3 className="font-extrabold text-[15px] text-slate-900 flex items-center gap-2">
+              <User className="w-4.5 h-4.5 text-[#105e3f]" />
+              <span>Thông tin cá nhân</span>
+            </h3>
+            <div className="grid grid-cols-2 gap-3 text-[12.5px]">
+              <div className="bg-slate-50 p-2.5 rounded-2xl">
+                <span className="text-slate-500 font-bold block text-[11px]">Giới tính:</span>
+                <span className="font-extrabold text-slate-900">{newlyCreatedProfile.gender}</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-2xl">
+                <span className="text-slate-500 font-bold block text-[11px]">Ngày sinh:</span>
+                <span className="font-extrabold text-slate-900">{newlyCreatedProfile.birthDate}</span>
+              </div>
+              <div className="bg-slate-50 p-2.5 rounded-2xl col-span-2">
+                <span className="text-slate-500 font-bold block text-[11px]">Số điện thoại:</span>
+                <span className="font-extrabold text-slate-900">📞 {newlyCreatedProfile.phone}</span>
+              </div>
+              {newlyCreatedProfile.email && (
+                <div className="bg-slate-50 p-2.5 rounded-2xl col-span-2">
+                  <span className="text-slate-500 font-bold block text-[11px]">Email:</span>
+                  <span className="font-extrabold text-slate-900">{newlyCreatedProfile.email}</span>
+                </div>
+              )}
+              {newlyCreatedProfile.address && (
+                <div className="bg-slate-50 p-2.5 rounded-2xl col-span-2">
+                  <span className="text-slate-500 font-bold block text-[11px]">Địa chỉ:</span>
+                  <span className="font-extrabold text-slate-900">{newlyCreatedProfile.address}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Skin Survey Results */}
+          <div className="bg-white rounded-3xl p-5 shadow-xs border border-gray-100 space-y-3">
+            <h3 className="font-extrabold text-[15px] text-slate-900 flex items-center gap-2">
+              <Activity className="w-4.5 h-4.5 text-[#105e3f]" />
+              <span>Đặc điểm & Khảo sát tình trạng da</span>
+            </h3>
+
+            <div className="space-y-2.5 text-[12.5px]">
+              <div className="bg-emerald-50/70 p-3 rounded-2xl">
+                <span className="text-emerald-900 font-bold block text-[11px] mb-0.5">Loại da:</span>
+                <span className="font-extrabold text-emerald-950 text-[13.5px]">{newlyCreatedProfile.skinType}</span>
+              </div>
+
+              <div className="bg-emerald-50/70 p-3 rounded-2xl">
+                <span className="text-emerald-900 font-bold block text-[11px] mb-0.5">Mức độ nhạy cảm:</span>
+                <span className="font-extrabold text-emerald-950">{newlyCreatedProfile.sensitivity}</span>
+              </div>
+
+              <div className="bg-emerald-50/70 p-3 rounded-2xl">
+                <span className="text-emerald-900 font-bold block text-[11px] mb-0.5">Mối quan tâm chính:</span>
+                <span className="font-extrabold text-emerald-950">{newlyCreatedProfile.primaryConcern}</span>
+              </div>
+
+              <div className="bg-emerald-50/70 p-3 rounded-2xl">
+                <span className="text-emerald-900 font-bold block text-[11px] mb-0.5">Mục tiêu chăm sóc:</span>
+                <span className="font-extrabold text-emerald-950">{newlyCreatedProfile.careGoal}</span>
+              </div>
+
+              <div className="bg-emerald-50/70 p-3 rounded-2xl">
+                <span className="text-emerald-900 font-bold block text-[11px] mb-0.5">Sản phẩm đang dùng:</span>
+                <span className="font-extrabold text-emerald-950">{newlyCreatedProfile.currentProducts}</span>
+              </div>
+
+              <div className="bg-rose-50 p-3 rounded-2xl border border-rose-200">
+                <span className="text-rose-800 font-bold block text-[11px] mb-0.5">Thành phần dị ứng / Cần tránh:</span>
+                <span className="font-extrabold text-rose-950">{newlyCreatedProfile.allergies}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Booking Card */}
+          <div className="bg-gradient-to-br from-[#f4f9f6] to-white rounded-3xl p-5 border border-emerald-600/30 shadow-xs space-y-3">
+            <h4 className="font-extrabold text-[15px] text-[#105e3f] flex items-center gap-2">
+              <Stethoscope className="w-5 h-5" />
+              <span>Khám chuyên sâu tại Hasaki Clinic</span>
+            </h4>
+            <p className="text-[12.5px] text-slate-600 leading-relaxed font-medium">
+              Hồ sơ da của bạn đã được lưu! Hãy đặt lịch ngay để bác sĩ da liễu tại Hasaki Clinic soi da đa tầng và lên phác đồ điều trị cá nhân hóa cho bạn.
+            </p>
+
+            <div className="space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateBooking) onNavigateBooking();
+                }}
+                className="w-full h-12 rounded-2xl bg-[#105e3f] hover:bg-[#0c4a31] text-white font-extrabold text-[14px] shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <Calendar className="w-4.5 h-4.5" />
+                <span>Đặt lịch khám tại Clinic ngay</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('function_hub')}
+                className="w-full h-11 rounded-2xl bg-[#105e3f]/10 text-[#105e3f] hover:bg-[#105e3f]/20 font-bold text-[13px] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Xem hồ sơ & Chức năng mẫu Clinic (TRỊNH PHƯƠNG THẢO)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('profile_list')}
+                className="w-full h-11 rounded-2xl bg-white border border-gray-300 hover:bg-gray-50 text-slate-700 font-bold text-[13px] transition-all cursor-pointer"
+              >
+                Về danh sách hồ sơ
+              </button>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ============================================================== */}
       {/* MODAL: LIÊN HỆ NGƯỜI PHỤ TRÁCH                                 */}
       {/* ============================================================== */}
       {contactModal && (
@@ -1879,6 +2608,59 @@ export default function ScreenHoSoDa({
           <div className="bg-white/15 backdrop-blur-md text-white rounded-2xl p-3.5 text-[12px] leading-relaxed">
             <strong className="text-emerald-300 block mb-0.5">Phân tích chuyên môn:</strong>
             {lightboxPhoto.note}
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL LỰA CHỌN: ĐÃ TỪNG / CHƯA TỪNG SỬ DỤNG DỊCH VỤ       */}
+      {/* ======================================================== */}
+      {showModalSelection && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end justify-center animate-in fade-in duration-200">
+          <div className="w-full max-w-[430px] bg-white rounded-t-[28px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-200 relative">
+            
+            {/* Close Button X */}
+            <button
+              onClick={() => setShowModalSelection(false)}
+              className="absolute right-5 top-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
+              aria-label="Đóng"
+            >
+              <X className="w-5 h-5 stroke-[2.5]" />
+            </button>
+
+            {/* Question matching Hình 2 */}
+            <div className="text-center mt-2 mb-6 px-4">
+              <h3 className="text-[17px] font-extrabold text-slate-900 leading-snug">
+                Bạn đã từng sử dụng dịch vụ tư vấn/chăm sóc da tại <span className="text-[#105e3f]">Hasaki</span>?
+              </h3>
+              <p className="text-[12px] text-slate-500 mt-1.5 font-medium">
+                Chọn trạng thái phù hợp để tiếp tục trải nghiệm hồ sơ da
+              </p>
+            </div>
+
+            {/* 2 Buttons matching Hình 2 */}
+            <div className="flex flex-col gap-3 pb-2">
+              {/* Button 1: ĐÃ TỪNG SỬ DỤNG */}
+              <button
+                type="button"
+                onClick={handleSelectExistingUser}
+                className="w-full h-[52px] rounded-[16px] bg-[#105e3f] hover:bg-[#0c4a31] active:scale-98 text-white font-extrabold text-[15px] tracking-wide shadow-sm transition-all cursor-pointer flex items-center justify-center uppercase gap-2"
+              >
+                <Check className="w-5 h-5 stroke-[3]" />
+                <span>ĐÃ TỪNG SỬ DỤNG (HỒ SƠ CLINIC)</span>
+              </button>
+
+              {/* Button 2: CHƯA TỪNG SỬ DỤNG */}
+              <button
+                type="button"
+                onClick={handleSelectNewUser}
+                className="w-full h-[52px] rounded-[16px] bg-white border-2 border-[#105e3f] text-[#105e3f] hover:bg-emerald-50 active:scale-98 font-extrabold text-[15px] tracking-wide shadow-xs transition-all cursor-pointer flex items-center justify-center uppercase gap-2"
+              >
+                <UserPlus className="w-5 h-5 stroke-[2.2]" />
+                <span>CHƯA TỪNG SỬ DỤNG (TẠO MỚI)</span>
+              </button>
+            </div>
+
           </div>
         </div>
       )}
