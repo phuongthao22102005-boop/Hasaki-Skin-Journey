@@ -36,6 +36,7 @@ import { initialBookingSlips } from '../data/bookingHistoryData';
 export default function ScreenHoSoDa({ 
   user, 
   bookingSlips = [], 
+  consultationRecords = [],
   onUpdateUser, 
   onBackToHome, 
   onNavigateBooking,
@@ -182,6 +183,31 @@ export default function ScreenHoSoDa({
       handoverNote: null
     }
   ];
+
+  // Combine treatment sessions with live employee consultations
+  const customConsultations = (consultationRecords || [])
+    .filter(c => c.customerId === 'HSK-221005' || c.customerName?.includes('PHƯƠNG THẢO'))
+    .filter(c => c.sessionNumber >= 4)
+    .map(c => ({
+      sessionNumber: c.sessionNumber || 4,
+      date: c.date,
+      status: 'completed',
+      statusText: 'Đã hoàn thành',
+      serviceName: c.service || 'Khám & Tư vấn da liễu chuyên sâu',
+      staffRole: c.staffRole || 'Bác sĩ phụ trách',
+      staffName: c.staffName || 'BS. CKI Vũ Hoài Nam',
+      staffPhone: '0903 112 334',
+      initialSkinCondition: c.skinCondition || 'Nền da phục hồi tốt, độ ẩm cân bằng.',
+      afterSkinCondition: c.diagnosis || 'Được tư vấn phác đồ và chỉ định sản phẩm phục hồi.',
+      sessionNote: `Ghi chú Bác sĩ: ${c.recommendations || 'Tiếp tục theo dõi phác đồ.'}`,
+      customerFeedback: 'Khách hàng hài lòng và tuân thủ hướng dẫn điều trị.',
+      handoverNote: c.handoverNote ? `Đã bàn giao cho ${c.handoverTo || 'bác sĩ phụ trách'}` : null
+    }));
+
+  const allTreatmentSessions = [
+    ...treatmentSessions.filter(ts => !customConsultations.some(cc => cc.sessionNumber === ts.sessionNumber)),
+    ...customConsultations
+  ].sort((a, b) => a.sessionNumber - b.sessionNumber);
 
   // Save profile changes
   const handleSaveProfile = () => {
@@ -598,6 +624,22 @@ export default function ScreenHoSoDa({
       {viewMode === 'treatment_history' && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
           
+          {/* Breadcrumb banner linking to Homepage & Skin Profile hub */}
+          <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between text-[12px] shadow-2xs">
+            <div className="flex items-center gap-1.5 text-[#105e3f] font-bold">
+              <Clock className="w-4 h-4 text-[#105e3f]" />
+              <span>Lịch sử tư vấn &amp; điều trị</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setViewMode('function_hub')}
+              className="text-[#105e3f] font-extrabold hover:underline flex items-center gap-1 text-[11.5px] cursor-pointer"
+            >
+              <span>Xem 5 mục hồ sơ da</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Header Banner: Tên khách hàng & Dịch vụ đang sử dụng */}
           <div className="bg-gradient-to-r from-[#105e3f] to-[#1e7e57] text-white rounded-3xl p-4.5 shadow-sm">
             <div className="flex items-center justify-between">
@@ -636,9 +678,9 @@ export default function ScreenHoSoDa({
             </span>
           </div>
 
-          {/* List of 4 Treatment Sessions */}
+          {/* List of Treatment Sessions (Dynamically synchronized with Employee consultations) */}
           <div className="space-y-4">
-            {treatmentSessions.map((sess) => (
+            {allTreatmentSessions.map((sess) => (
               <div
                 key={sess.sessionNumber}
                 className="bg-white rounded-3xl p-4.5 shadow-xs border border-gray-100 space-y-3"
