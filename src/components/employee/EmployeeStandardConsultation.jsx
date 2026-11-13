@@ -258,8 +258,12 @@ export default function EmployeeStandardConsultation({
                   }`}
                 >
                   <img
-                    src={cust.avatar || '/images/thao_avatar.png'}
+                    src={cust.avatar || '/images/customer_default_avatar.png'}
                     alt={cust.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/images/customer_default_avatar.png';
+                    }}
                     className="w-10 h-10 rounded-xl object-cover border border-emerald-200"
                   />
                   <div className="overflow-hidden">
@@ -276,8 +280,12 @@ export default function EmployeeStandardConsultation({
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 pb-3">
               <div className="flex items-center gap-3">
                 <img
-                  src={currentCustomer?.avatar || '/images/thao_avatar.png'}
+                  src={currentCustomer?.avatar || '/images/customer_default_avatar.png'}
                   alt={currentCustomer?.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/images/customer_default_avatar.png';
+                  }}
                   className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-400 bg-white"
                 />
                 <div>

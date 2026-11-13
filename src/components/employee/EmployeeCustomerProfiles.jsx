@@ -198,11 +198,11 @@ export default function EmployeeCustomerProfiles({
               {/* Top Row: Avatar & Primary Info */}
               <div className="flex items-start gap-4">
                 <img
-                  src={customer.avatar || '/images/thao_avatar.jpg'}
+                  src={customer.avatar || '/images/customer_default_avatar.png'}
                   alt={customer.name}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/scanned_face.png';
+                    e.target.src = '/images/customer_default_avatar.png';
                   }}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-200 shadow-2xs bg-white flex-shrink-0"
                 />

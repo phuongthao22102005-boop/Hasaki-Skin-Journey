@@ -112,7 +112,11 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length >= 4 && parsed[0]?.name && parsed[1]?.name) {
-          return parsed;
+          // Always ensure customer profiles use the updated avatar
+          return parsed.map(p => ({
+            ...p,
+            avatar: '/images/customer_default_avatar.png'
+          }));
         }
       }
       return initialCustomerProfiles;

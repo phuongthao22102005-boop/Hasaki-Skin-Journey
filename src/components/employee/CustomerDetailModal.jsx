@@ -72,8 +72,12 @@ export default function CustomerDetailModal({
         <div className="bg-gradient-to-r from-[#105e3f] to-[#174e37] text-white p-5 sm:p-6 flex items-start justify-between relative">
           <div className="flex items-center gap-4">
             <img
-              src={customer.avatar || '/images/thao_avatar.png'}
+              src={customer.avatar || '/images/customer_default_avatar.png'}
               alt={customer.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/images/customer_default_avatar.png';
+              }}
               className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-300/80 shadow-md bg-white"
             />
             <div>
