@@ -19,7 +19,7 @@ export default function Screen2Login({ onLoginSuccess, onBackToSplash }) {
 
     if (!finalName && !finalPass) {
       // Auto-populate for quick testing if user clicks Log In directly
-      finalName = "Nguyễn Văn A";
+      finalName = "TRỊNH PHƯƠNG THẢO";
       finalPass = "hasaki2026";
       setName(finalName);
       setPassword(finalPass);
@@ -41,7 +41,7 @@ export default function Screen2Login({ onLoginSuccess, onBackToSplash }) {
   };
 
   const fillQuickDemo = () => {
-    setName('Nguyễn Văn A');
+    setName('TRỊNH PHƯƠNG THẢO');
     setPassword('Hasaki@2026');
     setShowMenu(false);
   };

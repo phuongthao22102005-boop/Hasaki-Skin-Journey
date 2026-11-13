@@ -41,11 +41,11 @@ export default function ScreenTaiKhoan({
   // Edit personal info state
   const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [infoForm, setInfoForm] = useState({
-    name: user?.name || 'Nguyễn Văn A',
-    gender: user?.gender || 'Nam',
-    phone: user?.phone || '0876543299',
-    email: user?.email || 'khachhang@hasaki.vn',
-    birthDate: user?.birthDate || '15/08/1998'
+    name: user?.name || 'TRỊNH PHƯƠNG THẢO',
+    gender: user?.gender || 'Nữ',
+    phone: user?.phone || '0987 221 005',
+    email: user?.email || 'phuongthao.boop@gmail.com',
+    birthDate: user?.birthDate || '22/10/2005'
   });
   const [infoSuccess, setInfoSuccess] = useState(false);
 
@@ -53,11 +53,11 @@ export default function ScreenTaiKhoan({
   React.useEffect(() => {
     if (user) {
       setInfoForm({
-        name: user.name || 'Nguyễn Văn A',
-        gender: user.gender || 'Nam',
-        phone: user.phone || '0876543299',
-        email: user.email || 'khachhang@hasaki.vn',
-        birthDate: user.birthDate || '15/08/1998'
+        name: user.name || 'TRỊNH PHƯƠNG THẢO',
+        gender: user.gender || 'Nữ',
+        phone: user.phone || '0987 221 005',
+        email: user.email || 'phuongthao.boop@gmail.com',
+        birthDate: user.birthDate || '22/10/2005'
       });
     }
   }, [user, activeModal]);
@@ -80,9 +80,9 @@ export default function ScreenTaiKhoan({
     }, 900);
   };
 
-  // Format display name: Default to "Nguyễn Văn A" if empty, uppercase matching Hình 1
-  const displayName = (user && user.name ? user.name : 'Nguyễn Văn A').toUpperCase();
-  const displayPhone = user && user.phone ? user.phone : '087*******99';
+  // Format display name: Default to "TRỊNH PHƯƠNG THẢO" if empty, uppercase matching Hình 1
+  const displayName = (user && user.name ? user.name : 'TRỊNH PHƯƠNG THẢO').toUpperCase();
+  const displayPhone = user && user.phone ? user.phone : '0987 221 005';
 
   return (
     <div className="relative w-full h-full min-h-[680px] flex flex-col justify-between overflow-hidden bg-[#eff4ef] select-none text-slate-800">

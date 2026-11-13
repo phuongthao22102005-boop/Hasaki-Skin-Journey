@@ -26,21 +26,40 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('screen1');
   const [previousScreen, setPreviousScreen] = useState('screen3');
   
-  // Persistent User Profile with Gender customization
+  // Persistent User Profile with Gender customization & Trịnh Phương Thảo profile
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('hasaki_user_profile');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.name === 'Nguyễn Văn A' || parsed.name === 'Minh Thanh') {
+          return {
+            name: 'TRỊNH PHƯƠNG THẢO',
+            gender: 'Nữ',
+            phone: '0987 221 005',
+            email: 'phuongthao.boop@gmail.com',
+            birthDate: '22/10/2005',
+            cccd: '079305012899',
+            country: 'Việt Nam',
+            job: 'Sinh viên / Thiết kế đồ họa & Sáng tạo nội dung',
+            address: 'Landmark 81, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP. HCM'
+          };
+        }
+        return parsed;
+      }
     } catch (e) {
       console.error(e);
     }
     return { 
-      name: 'Nguyễn Văn A',
-      gender: 'Nam',
-      phone: '087*******99',
-      email: 'khachhang@hasaki.vn',
-      birthDate: '15/08/1998',
-      address: '71 Hoàng Hoa Thám, Phường 13, Quận Tân Bình, TP. HCM'
+      name: 'TRỊNH PHƯƠNG THẢO',
+      gender: 'Nữ',
+      phone: '0987 221 005',
+      email: 'phuongthao.boop@gmail.com',
+      birthDate: '22/10/2005',
+      cccd: '079305012899',
+      country: 'Việt Nam',
+      job: 'Sinh viên / Thiết kế đồ họa & Sáng tạo nội dung',
+      address: 'Landmark 81, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP. HCM'
     };
   });
 
@@ -304,8 +323,12 @@ export default function App() {
       {currentScreen === 'screen_hosoda' && (
         <ScreenHoSoDa 
           user={user}
+          bookingSlips={bookingSlips}
           onUpdateUser={handleUpdateUser}
           onBackToHome={handleBackToHome}
+          onNavigateBooking={() => setCurrentScreen('screen_datlich')}
+          onNavigateHistory={() => setCurrentScreen('screen_lichsudatlich')}
+          onNavigateInvoice={() => setCurrentScreen('screen_hoadon')}
         />
       )}
 

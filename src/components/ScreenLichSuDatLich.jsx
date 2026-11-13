@@ -55,7 +55,7 @@ function QRCodeBox({ value = 'HASAKI_BOOKING', size = 68 }) {
 }
 
 export default function ScreenLichSuDatLich({ 
-  user = { name: 'Nguyễn Văn A' }, 
+  user = { name: 'TRỊNH PHƯƠNG THẢO', gender: 'Nữ' }, 
   slips = [],
   onBackToHome,
   onNavigateInvoice
@@ -282,8 +282,8 @@ export default function ScreenLichSuDatLich({
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-slate-700">Họ tên:</span>{' '}
-                        <strong className="text-slate-900 font-extrabold">
-                          {slip.patientName || user?.name || 'NGUYỄN VĂN A'}
+                        <strong className="text-slate-900 font-extrabold uppercase">
+                          {slip.patientName || user?.name || 'TRỊNH PHƯƠNG THẢO'}
                         </strong>
                       </div>
                     </div>
@@ -291,11 +291,11 @@ export default function ScreenLichSuDatLich({
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-slate-700">Giới tính:</span>{' '}
-                        <strong className="text-slate-900 font-bold">{slip.gender || user?.gender || 'Nam'}</strong>
+                        <strong className="text-slate-900 font-bold">{slip.gender || user?.gender || 'Nữ'}</strong>
                       </div>
                       <div>
                         <span className="text-slate-700">Ngày sinh:</span>{' '}
-                        <strong className="text-slate-900 font-bold">{slip.dob || 'xx/xx/xxxx'}</strong>
+                        <strong className="text-slate-900 font-bold">{slip.dob || '22/10/2005'}</strong>
                       </div>
                     </div>
 
