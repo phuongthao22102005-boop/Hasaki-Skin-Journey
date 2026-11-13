@@ -25,6 +25,7 @@ import { initialBookingSlips, initialInvoices, createNewBookingAndInvoice } from
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('screen1');
   const [previousScreen, setPreviousScreen] = useState('screen3');
+  const [hoSoDaInitialView, setHoSoDaInitialView] = useState('profile_list');
   
   // Persistent User Profile with Gender customization & Trịnh Phương Thảo profile
   const [user, setUser] = useState(() => {
@@ -132,6 +133,11 @@ export default function App() {
     setCurrentScreen('screen3');
   };
 
+  const handleNavigateHoSoDa = (initialView = 'profile_list') => {
+    setHoSoDaInitialView(initialView);
+    setCurrentScreen('screen_hosoda');
+  };
+
   // 3. Navigation between features from Homescreen
   const handleNavigateFeature = (featureId) => {
     if (featureId === 'danh-gia-da') {
@@ -140,7 +146,7 @@ export default function App() {
       setPreviousScreen('screen3');
       setCurrentScreen('screen_chutrinh');
     } else if (featureId === 'ho-so-da') {
-      setCurrentScreen('screen_hosoda');
+      handleNavigateHoSoDa('profile_list');
     } else if (featureId === 'nhac-lich') {
       setCurrentScreen('screen_nhaclich');
     } else if (featureId === 'ho-tro') {
@@ -170,7 +176,8 @@ export default function App() {
     } else if (featureId === 'tat-ca') {
       setCurrentScreen('screen_tatcatienich');
     } else if (featureId === 'lich-su-tu-van') {
-      setCurrentScreen('screen_lichsudatlich');
+      // Liên kết chức năng Lịch sử tư vấn với phần Lịch sử tư vấn/điều trị ở Hồ sơ da
+      handleNavigateHoSoDa('treatment_history');
     }
   };
 
@@ -244,7 +251,7 @@ export default function App() {
           user={user}
           onBack={handleBackToHome}
           onBackToHome={handleBackToHome}
-          onNavigateHoSoDa={() => setCurrentScreen('screen_hosoda')}
+          onNavigateHoSoDa={() => handleNavigateHoSoDa('profile_list')}
           onBookingConfirmed={handleBookingSuccess}
           onNavigateHistory={() => setCurrentScreen('screen_lichsudatlich')}
           onNavigateInvoice={() => setCurrentScreen('screen_hoadon')}
@@ -303,7 +310,7 @@ export default function App() {
           user={user}
           onBackToHome={handleBackToHome}
           onNavigateHome={handleBackToHome}
-          onNavigateHoSoDa={() => setCurrentScreen('screen_hosoda')}
+          onNavigateHoSoDa={() => handleNavigateHoSoDa('profile_list')}
           onNavigateDatLich={() => setCurrentScreen('screen_datlich')}
           onNavigateTaiKhoan={() => setCurrentScreen('screen_taikhoan')}
           onNavigateAIChat={() => setCurrentScreen('screen_aichat')}
@@ -329,6 +336,7 @@ export default function App() {
           onNavigateBooking={() => setCurrentScreen('screen_datlich')}
           onNavigateHistory={() => setCurrentScreen('screen_lichsudatlich')}
           onNavigateInvoice={() => setCurrentScreen('screen_hoadon')}
+          initialView={hoSoDaInitialView}
         />
       )}
 
@@ -356,7 +364,7 @@ export default function App() {
           onBackToHome={handleBackToHome}
           onNavigateBooking={() => setCurrentScreen('screen_datlich')}
           onNavigateProducts={() => setCurrentScreen('screen_sanpham')}
-          onNavigateHoSoDa={() => setCurrentScreen('screen_hosoda')}
+          onNavigateHoSoDa={() => handleNavigateHoSoDa('profile_list')}
           onNavigateBangGia={() => setCurrentScreen('screen_banggia')}
         />
       )}
@@ -375,7 +383,7 @@ export default function App() {
           onUpdateUser={handleUpdateUser}
           onLogout={handleBackToLogin}
           onNavigateHome={handleBackToHome}
-          onNavigateHoSoDa={() => setCurrentScreen('screen_hosoda')}
+          onNavigateHoSoDa={() => handleNavigateHoSoDa('profile_list')}
           onNavigateAIChat={() => setCurrentScreen('screen_aichat')}
           onNavigateDatLich={() => setCurrentScreen('screen_datlich')}
           onNavigateThongBao={() => setCurrentScreen('screen_thongbao')}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Home, 
@@ -40,17 +40,25 @@ export default function ScreenHoSoDa({
   onBackToHome, 
   onNavigateBooking,
   onNavigateHistory,
-  onNavigateInvoice
+  onNavigateInvoice,
+  initialView = 'profile_list'
 }) {
   // Navigation / View modes:
   // 'profile_list'     : Danh sách hồ sơ với bản demo có sẵn của TRỊNH PHƯƠNG THẢO
   // 'function_hub'     : Trang "Chọn chức năng" (5 mục)
-  // 'treatment_history': Chức năng 1 - Lịch sử tư vấn/điều trị
+  // 'treatment_history': Chức năng 1 - Lịch sử tư vấn/điều trị (Liên kết trực tiếp với mục Lịch sử tư vấn ở Homepage)
   // 'treatment_results': Chức năng 2 - Kết quả tư vấn/điều trị
   // 'progress_photos'  : Chức năng 3 - Hình ảnh chụp
   // 'booking_history'  : Chức năng 4 - Lịch sử đặt lịch
   // 'profile_info'     : Chức năng 5 - Thông tin hồ sơ
-  const [viewMode, setViewMode] = useState('profile_list');
+  const [viewMode, setViewMode] = useState(initialView || 'profile_list');
+
+  // Synchronize viewMode when initialView changes (e.g. from Homepage 'Lịch sử tư vấn')
+  useEffect(() => {
+    if (initialView) {
+      setViewMode(initialView);
+    }
+  }, [initialView]);
 
   // Customer Profile: TRỊNH PHƯƠNG THẢO (Demo profile with persistent edit support)
   const [profileData, setProfileData] = useState(() => {
@@ -236,6 +244,8 @@ export default function ScreenHoSoDa({
                 onBackToHome();
               } else if (viewMode === 'function_hub') {
                 setViewMode('profile_list');
+              } else if (viewMode === 'treatment_history' && initialView === 'treatment_history') {
+                onBackToHome();
               } else {
                 setViewMode('function_hub');
               }
@@ -588,6 +598,22 @@ export default function ScreenHoSoDa({
       {viewMode === 'treatment_history' && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 scroll-smooth">
           
+          {/* Breadcrumb banner linking to Homepage & Skin Profile hub */}
+          <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl px-3.5 py-2.5 flex items-center justify-between text-[12px] shadow-2xs">
+            <div className="flex items-center gap-1.5 text-[#105e3f] font-bold">
+              <Clock className="w-4 h-4 text-[#105e3f]" />
+              <span>Lịch sử tư vấn &amp; điều trị</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setViewMode('function_hub')}
+              className="text-[#105e3f] font-extrabold hover:underline flex items-center gap-1 text-[11.5px] cursor-pointer"
+            >
+              <span>Xem 5 mục hồ sơ da</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {/* Header Banner: Tên khách hàng & Dịch vụ đang sử dụng */}
           <div className="bg-gradient-to-r from-[#105e3f] to-[#1e7e57] text-white rounded-3xl p-4.5 shadow-sm">
             <div className="flex items-center justify-between">
@@ -817,6 +843,25 @@ export default function ScreenHoSoDa({
                 <span>Đã gửi phản hồi thành công! BS. CKI Lê Thị Mai Chi sẽ liên hệ lại với bạn trong ít phút.</span>
               </div>
             )}
+          </div>
+
+          {/* Quick navigation to other skin profile modules or return home */}
+          <div className="pt-2 pb-6 space-y-2.5">
+            <button
+              type="button"
+              onClick={() => setViewMode('function_hub')}
+              className="w-full py-3.5 rounded-full bg-white border border-gray-300 hover:bg-gray-50 active:scale-98 text-slate-800 font-bold text-[13.5px] transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+            >
+              <span>Xem toàn bộ chức năng Hồ sơ da (5 mục)</span>
+              <ChevronRight className="w-4 h-4 text-[#105e3f]" />
+            </button>
+            <button
+              type="button"
+              onClick={onBackToHome}
+              className="w-full py-2 text-center text-[13px] text-gray-500 hover:text-[#105e3f] font-semibold cursor-pointer"
+            >
+              ← Về trang chủ Hasaki
+            </button>
           </div>
 
         </div>

@@ -228,8 +228,13 @@ export default function Screen3Home({
       return;
     }
     // Lịch sử đặt lịch -> ScreenLichSuDatLich
-    if (item.id === 'lich-su-dat-lich' || item.id === 'lich-su-tu-van') {
+    if (item.id === 'lich-su-dat-lich') {
       if (onNavigateFeature) onNavigateFeature('lich-su-dat-lich');
+      return;
+    }
+    // Lịch sử tư vấn -> ScreenHoSoDa (chức năng Lịch sử tư vấn/điều trị)
+    if (item.id === 'lich-su-tu-van') {
+      if (onNavigateFeature) onNavigateFeature('lich-su-tu-van');
       return;
     }
     // Hóa đơn điện tử -> ScreenHoaDon
