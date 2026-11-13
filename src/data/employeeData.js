@@ -79,13 +79,18 @@ export const employeeAccounts = [
   }
 ];
 
-// Initial shared customer profiles (Bi-directional sync with Customer Interface)
+// 4 SIMULATED CUSTOMER PROFILES (HỒ SƠ KHÁCH HÀNG MÔ PHỎNG ĐẦY ĐỦ TRONG EMPLOYEE INTERFACE)
 export const initialCustomerProfiles = [
+  // =========================================================================
+  // 1. HỒ SƠ CHÍNH: TRỊNH PHƯƠNG THẢO - Mụn ẩn, thâm đỏ PIE & Hỗn hợp nhạy cảm
+  // =========================================================================
   {
     id: 'HSK-221005',
     customerCode: 'HSK-221005',
+    name: 'TRỊNH PHƯƠNG THẢO',
     fullName: 'TRỊNH PHƯƠNG THẢO',
     gender: 'Nữ',
+    dob: '22/10/2005',
     birthDate: '22/10/2005',
     age: 21,
     phone: '0987 221 005',
@@ -93,32 +98,62 @@ export const initialCustomerProfiles = [
     cccd: '079305012899',
     country: 'Việt Nam',
     job: 'Sinh viên / Thiết kế đồ họa & Sáng tạo nội dung',
+    occupation: 'Sinh viên / Thiết kế đồ họa & Sáng tạo nội dung',
     address: 'Landmark 81, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, TP. HCM',
     avatar: '/images/thao_avatar.jpg',
+    tier: 'VIP Platinum',
     membershipTier: 'VIP Platinum',
     rewardPoints: 2450,
     createdDate: '10/09/2026',
     lastVisitDate: '30/10/2026',
+    assignedDoctor: 'BS. CKI Lê Thị Mai Chi',
     primaryDoctor: 'BS. CKI Lê Thị Mai Chi',
     primaryBranch: 'Hasaki Clinic Quận 7',
     
-    // Core Skin Profile (Tình trạng da)
-    skinType: 'Hỗn hợp thiên dầu nhạy cảm',
+    // Chỉ số da chuyên sâu Visia
+    skinType: 'Da hỗn hợp thiên dầu nhạy cảm',
     skinTypeCode: 'OILY_COMBINATION_SENSITIVE',
     fitzpatrickType: 'Type III (Da vàng châu Á)',
-    skinBarrierScore: 68, // Thang 100
-    moistureLevel: 42, // %
-    sebumLevel: 78, // %
-    pigmentationLevel: 35, // %
-    sensitivityLevel: 'Mức độ 3/5 (Dễ ửng đỏ khi thay đổi thời tiết hoặc dùng acid nồng độ cao)',
+    skinHealthScore: 78,
+    skinMetrics: {
+      hydration: 62,
+      oilLevel: 78,
+      pigmentation: 45,
+      sensitivity: 35
+    },
+    sensitivityLevel: 'Nhẹ (Mức độ 2/5 - Dễ ửng đỏ khi thời tiết thay đổi)',
     
     primaryConcerns: [
       'Mụn ẩn bít tắc vùng trán và cằm',
       'Mụn viêm đỏ khu trú 2 bên má',
       'Vết thâm đỏ sau mụn (PIE)',
-      'Lỗ chân lông to vùng chữ T'
+      'Lỗ chân lông to vùng T-zone'
     ],
-    
+    goals: 'Làm sạch mụn ẩn, mờ thâm đỏ và phục hồi hàng rào màng ẩm để da căng khỏe, sáng mịn tự nhiên trước Tết.',
+    allergies: 'Kích ứng cồn khô nồng độ cao (Alcohol Denat), nhạy cảm với BHA > 2% nếu không cấp ẩm đủ.',
+    doctorNotes: 'Da đang phục hồi rất tốt sau peel BHA buổi 2 và điện di HA. Nền da ẩm mượt, các nốt viêm khô cồi 90%. Tiếp tục duy trì dưỡng ẩm với Ceramide và chống nắng Mexoryl 400. Tránh dùng AHA/Retinoid nồng độ cao trong 7 ngày tới.',
+    specialNotes: 'Khách hàng chuẩn bị bảo vệ đồ án tốt nghiệp, khuyên duy trì uống đủ nước và ngủ trước 23h.',
+    lastUpdatedBy: 'BS. CKI Lê Thị Mai Chi',
+    lastUpdatedAt: '30/10/2026',
+
+    activePackage: {
+      name: 'Liệu trình Điều trị mụn Y khoa đa tầng & Phục hồi hàng rào da Skin Barrier',
+      totalSessions: 5,
+      currentSession: 3,
+      progressPercentage: 60,
+      nextSessionDate: '15/11/2026',
+      clinic: 'Hasaki Clinic Quận 7'
+    },
+    activeTreatmentPackage: {
+      name: 'Liệu trình Điều trị mụn Y khoa đa tầng & Phục hồi hàng rào da Skin Barrier',
+      totalSessions: 5,
+      completedSessions: 3,
+      currentSession: 3,
+      progressPercentage: 60,
+      nextSessionDate: '15/11/2026',
+      clinic: 'Hasaki Clinic Quận 7'
+    },
+
     currentRoutine: {
       morning: [
         'Sữa rửa mặt Cerave Foaming Facial Cleanser',
@@ -129,18 +164,9 @@ export const initialCustomerProfiles = [
       evening: [
         'Nước tẩy trang Bioderma Sensibio H2O (nắp hồng)',
         'Sữa rửa mặt Cerave Foaming Facial Cleanser',
-        'Dung dịch BHA Obagi 2% (dùng 2 lần/tuần vào thứ 3 và thứ 6)',
+        'Serum Skin1004 Madagascar Centella Ampoule',
         'Kem dưỡng phục hồi La Roche-Posay Cicaplast Baume B5+'
       ]
-    },
-
-    activeTreatmentPackage: {
-      name: 'Liệu trình Điều trị mụn Y khoa đa tầng & Phục hồi hàng rào da Skin Barrier',
-      totalSessions: 5,
-      completedSessions: 3,
-      progressPercentage: 60,
-      nextSessionDate: '15/11/2026',
-      clinic: 'Hasaki Clinic Quận 7'
     },
 
     lifestyleFactors: {
@@ -155,100 +181,243 @@ export const initialCustomerProfiles = [
       'Kích ứng nhẹ với hương liệu nhân tạo (fragrance) nồng độ cao',
       'Không dùng cồn khô (Alcohol denat) nồng độ cao',
       'Tiền sử đỏ da sau khi peel AHA nồng độ > 30%'
+    ],
+
+    serviceHistory: [
+      {
+        id: 'SRV-01',
+        serviceName: 'Lấy nhân mụn chuẩn Y khoa + Chiếu ánh sáng sinh học Blue Light',
+        date: '15/09/2026',
+        branch: 'Hasaki Clinic Quận 7',
+        technician: 'KTV Trịnh Phương Linh',
+        doctorCheck: 'BS. CKI Vũ Hoài Nam',
+        status: 'Hoàn thành',
+        outcome: 'Lấy sạch 45 cồi mụn ẩn trán & má, da ửng đỏ nhẹ 2 giờ sau giảm hẳn'
+      },
+      {
+        id: 'SRV-02',
+        serviceName: 'Peel Da BHA Salicylic 20% giảm viêm & gom cồi',
+        date: '29/09/2026',
+        branch: 'Hasaki Clinic Quận 7',
+        technician: 'KTV Nguyễn Thùy Linh',
+        doctorCheck: 'BS. CKI Vũ Hoài Nam',
+        status: 'Hoàn thành',
+        outcome: 'Gom cồi mụn viêm nhanh chóng, bong tróc mỏng nhẹ ngày thứ 3, không tăng sắc tố'
+      },
+      {
+        id: 'SRV-03',
+        serviceName: 'Điện di tinh chất Hyaluronic Acid & Ceramide phục hồi màng ẩm',
+        date: '15/10/2026',
+        branch: 'Hasaki Clinic Quận 7',
+        technician: 'KTV Trần Minh Tâm',
+        doctorCheck: 'BS. CKI Lê Thị Mai Chi',
+        status: 'Hoàn thành',
+        outcome: 'Độ ẩm da tăng vọt từ 42% lên 62%, nền da căng bóng, giảm hiện tượng khô căng'
+      }
+    ],
+
+    recommendedProducts: [
+      {
+        name: 'Kem Dưỡng Bioderma Sébium Hydra Dành Cho Da Mụn Thiếu Nước (40ml)',
+        brand: 'Bioderma',
+        price: '345.000₫',
+        purpose: 'Cấp ẩm sâu & phục hồi màng ẩm bị tổn thương sau lấy mụn và peel',
+        clinicalReason: 'Khách hàng có hiện tượng khô tróc vùng cánh mũi sau peel BHA; công thức Fluidactiv ngăn ngừa bít tắc lỗ chân lông.',
+        instructions: 'Thoa 2 lần/ngày sáng & tối sau bước serum, massage nhẹ nhàng cho thấm đều.',
+        recommendedBy: 'BS. CKI Vũ Hoài Nam (Clinic Q7)'
+      },
+      {
+        name: 'Serum Phục Hồi Skin1004 Madagascar Centella Ampoule (100ml)',
+        brand: 'Skin1004',
+        price: '350.000₫',
+        purpose: 'Làm dịu ửng đỏ, kháng viêm và kích thích tái tạo biểu bì da',
+        clinicalReason: 'Chiết xuất 100% Centella Asiatica độ tinh khiết cao, an toàn tuyệt đối cho da nhạy cảm sau thủ thuật.',
+        instructions: 'Nhỏ 3-4 giọt thoa đều toàn mặt, vỗ nhẹ trước khi dùng kem dưỡng ẩm.',
+        recommendedBy: 'Nguyễn Thùy Linh (Tư vấn viên Retail Q10)'
+      },
+      {
+        name: 'Kem Chống Nắng La Roche-Posay Anthelios UVMune 400 Oil Control (50ml)',
+        brand: 'La Roche-Posay',
+        price: '460.000₫',
+        purpose: 'Bảo vệ da chống tia UVA cực dài, ngăn ngừa thâm mụn sạm màu',
+        clinicalReason: 'Bộ lọc Mexoryl 400 tiên tiến, kiềm dầu 12h, bảo vệ tuyệt đối vùng da non sau điều trị.',
+        instructions: 'Bôi đủ lượng 2 ngón tay trước khi ra nắng 20 phút. Thoa lại sau mỗi 3-4 tiếng nếu ở ngoài trời.',
+        recommendedBy: 'BS. CKI Lê Thị Mai Chi (Clinic Q7)'
+      }
     ]
   },
 
+  // =========================================================================
+  // 2. HỒ SƠ 2: NGUYỄN VĂN AN - Mụn bọc viêm sưng quai hàm & Tuyến dầu phì đại
+  // =========================================================================
   {
     id: 'HSK-109283',
     customerCode: 'HSK-109283',
+    name: 'NGUYỄN VĂN AN',
     fullName: 'NGUYỄN VĂN AN',
     gender: 'Nam',
+    dob: '15/06/1998',
     birthDate: '15/06/1998',
     age: 28,
     phone: '0912 345 678',
     email: 'vanan.nguyen98@gmail.com',
     cccd: '079198009214',
     country: 'Việt Nam',
-    job: 'Kỹ sư phần mềm IT',
-    address: '555 Đường 3 Tháng 2, Phường Diên Hồng, Quận 10, TP. HCM',
+    job: 'Kỹ sư phần mềm IT (Full-stack Developer)',
+    occupation: 'Kỹ sư phần mềm IT (Full-stack Developer)',
+    address: '555 Đường 3 Tháng 2, Phường 8, Quận 10, TP. HCM',
     avatar: '/images/doctor_nam.png',
+    tier: 'Gold Member',
     membershipTier: 'Gold Member',
     rewardPoints: 1200,
     createdDate: '01/10/2026',
     lastVisitDate: '28/10/2026',
+    assignedDoctor: 'BS. CKI Vũ Hoài Nam',
     primaryDoctor: 'BS. CKI Vũ Hoài Nam',
     primaryBranch: 'Hasaki Clinic Quận 10',
     
-    skinType: 'Da dầu mụn bã nhờn',
+    skinType: 'Da dầu mụn bã nhờn nặng',
     skinTypeCode: 'OILY_ACNE_PRONE',
     fitzpatrickType: 'Type IV',
-    skinBarrierScore: 54,
-    moistureLevel: 31,
-    sebumLevel: 88,
-    pigmentationLevel: 45,
-    sensitivityLevel: 'Mức độ 2/5 (Da khỏe nhưng nhiều dầu nhờn)',
+    skinHealthScore: 52,
+    skinMetrics: {
+      hydration: 32,
+      oilLevel: 92,
+      pigmentation: 50,
+      sensitivity: 40
+    },
+    sensitivityLevel: 'Trung bình (Mụn bọc sưng đỏ nóng rát)',
     
     primaryConcerns: [
-      'Mụn bọc sưng viêm quai hàm',
+      'Mụn bọc sưng viêm góc hàm',
       'Mụn đầu đen cánh mũi',
-      'Lỗ chân lông rất to',
-      'Đổ dầu bóng nhờn sau 2 giờ rửa mặt'
+      'Tăng tiết bã nhờn nghiêm trọng',
+      'Lỗ chân lông thô to bít tắc'
     ],
-    
-    currentRoutine: {
-      morning: ['Sữa rửa mặt La Roche-Posay Effaclar', 'Gel dưỡng kiềm dầu', 'KCN kiềm dầu Eucerin'],
-      evening: ['Tẩy trang nước La Roche-Posay', 'Sữa rửa mặt Effaclar', 'Gel chấm mụn Klenzit C']
-    },
+    goals: 'Xẹp nhanh các ổ mụn bọc viêm đau nhức vùng quai hàm, kiềm dầu thừa cả ngày và thu nhỏ lỗ chân lông.',
+    allergies: 'Chưa ghi nhận tiền sử dị ứng thuốc bôi; da dày sừng nhưng tuyến bã nhờn phì đại.',
+    doctorNotes: 'Nhiều ổ viêm nang lông sâu quai hàm do cạo râu sai cách và thức khuya liên tục 2h sáng. Đã chích rạch dẫn lưu mủ ổ viêm lớn. Chỉ định bôi Klenzit C buổi tối, rửa mặt BHA 2% sáng tối và bổ sung kẽm Zinc 15mg.',
+    specialNotes: 'Bệnh nhân uống rất ít nước (1.2L/ngày). Dặn dò uống tối thiểu 2.2L nước/ngày và thay vỏ gối 2 lần/tuần.',
+    lastUpdatedBy: 'BS. CKI Vũ Hoài Nam',
+    lastUpdatedAt: '28/10/2026',
 
+    activePackage: {
+      name: 'Liệu trình Lấy nhân mụn Y khoa Vô khuẩn + Chiếu ánh sáng sinh học Blue Light tiêu viêm',
+      totalSessions: 3,
+      currentSession: 1,
+      progressPercentage: 33,
+      nextSessionDate: '05/11/2026',
+      clinic: 'Hasaki Clinic Quận 10'
+    },
     activeTreatmentPackage: {
-      name: 'Liệu trình Lấy nhân mụn Y khoa chuẩn vô khuẩn + Chiếu ánh sáng sinh học Blue Light (3 buổi)',
+      name: 'Liệu trình Lấy nhân mụn Y khoa Vô khuẩn + Chiếu ánh sáng sinh học Blue Light tiêu viêm',
       totalSessions: 3,
       completedSessions: 1,
+      currentSession: 1,
       progressPercentage: 33,
       nextSessionDate: '05/11/2026',
       clinic: 'Hasaki Clinic Quận 10'
     },
 
+    currentRoutine: {
+      morning: [
+        'Sữa rửa mặt La Roche-Posay Effaclar Purifying Foaming Gel',
+        'Gel dưỡng kiềm dầu SVR Sebiaclear Mat + Pores',
+        'Kem chống nắng Eucerin Sun Dry Touch Oil Control SPF 50+'
+      ],
+      evening: [
+        'Nước tẩy trang La Roche-Posay Effaclar Micellar Water Ultra',
+        'Sữa rửa mặt La Roche-Posay Effaclar',
+        'Gel chấm mụn kháng khuẩn Klenzit C (vùng quai hàm)',
+        'Kem dưỡng ẩm kiềm dầu I\'m from Vitamin Tree Water-gel'
+      ]
+    },
+
     lifestyleFactors: {
-      sleepHours: '5 - 6 tiếng / ngày',
+      sleepHours: '5 - 6 tiếng / ngày (thường xuyên thức khuya fix bug)',
       waterIntake: '1.2L / ngày (uống ít nước)',
       stressLevel: 'Cao (áp lực deadline dự án)',
-      sunExposure: 'Thấp',
+      sunExposure: 'Thấp (làm việc văn phòng)',
       makeupFrequency: 'Không trang điểm'
     },
 
-    allergiesAndPrecautions: ['Chưa ghi nhận tiền sử dị ứng thuốc bôi']
+    allergiesAndPrecautions: ['Chưa ghi nhận tiền sử dị ứng thuốc bôi'],
+
+    serviceHistory: [
+      {
+        id: 'SRV-AN-01',
+        serviceName: 'Lấy nhân mụn Y khoa vô khuẩn + Chiếu ánh sáng sinh học Blue Light',
+        date: '28/10/2026',
+        branch: 'Hasaki Clinic Quận 10',
+        technician: 'KTV Trần Minh Tâm',
+        doctorCheck: 'BS. CKI Vũ Hoài Nam',
+        status: 'Hoàn thành',
+        outcome: 'Lấy sạch 38 nhân mụn bọc và cồi đen, chiếu đèn Blue Light 415nm giảm viêm tức thì 60%'
+      }
+    ],
+
+    recommendedProducts: [
+      {
+        name: 'Sữa Rửa Mặt La Roche-Posay Effaclar Purifying Foaming Gel (400ml)',
+        brand: 'La Roche-Posay',
+        price: '435.000₫',
+        purpose: 'Làm sạch bã nhờn sâu trong lỗ chân lông, ngăn chặn vi khuẩn sinh sôi',
+        clinicalReason: 'Kẽm PCA giúp kiểm soát bài tiết bã nhờn, nước khoáng La Roche-Posay làm dịu kích ứng.',
+        instructions: 'Tạo bọt kỹ trên tay, massage vùng quai hàm và chữ T trong 60 giây, rửa sạch với nước mát.',
+        recommendedBy: 'BS. CKI Vũ Hoài Nam (Clinic Q10)'
+      },
+      {
+        name: 'Kem Chống Nắng Eucerin Sun Dry Touch Oil Control SPF 50+ (50ml)',
+        brand: 'Eucerin',
+        price: '465.000₫',
+        purpose: 'Bảo vệ da chống tia cực tím, kiềm dầu ráo mịn suốt 8 giờ',
+        clinicalReason: 'Công nghệ kiểm soát dầu L-Carnitine và các hạt hấp thụ lipid giúp da không bị bết rít.',
+        instructions: 'Thoa 1 lượng vừa đủ trước khi ra ngoài vào mỗi buổi sáng.',
+        recommendedBy: 'BS. CKI Vũ Hoài Nam (Clinic Q10)'
+      }
+    ]
   },
 
+  // =========================================================================
+  // 3. HỒ SƠ 3: TRẦN THU HÀ - Nám mảng đối xứng & Lão hóa sạm nám
+  // =========================================================================
   {
     id: 'HSK-204918',
     customerCode: 'HSK-204918',
+    name: 'TRẦN THU HÀ',
     fullName: 'TRẦN THU HÀ',
     gender: 'Nữ',
+    dob: '12/03/1988',
     birthDate: '12/03/1988',
     age: 38,
     phone: '0903 888 999',
     email: 'thuha.tran88@yahoo.com',
     cccd: '079188004123',
     country: 'Việt Nam',
-    job: 'Quản lý kinh doanh bất động sản',
+    job: 'Quản lý kinh doanh Bất động sản',
+    occupation: 'Quản lý kinh doanh Bất động sản',
     address: '189 Hai Bà Trưng, Phường Võ Thị Sáu, Quận 3, TP. HCM',
     avatar: '/images/doctor_chi.png',
+    tier: 'VIP Diamond',
     membershipTier: 'VIP Diamond',
     rewardPoints: 4800,
     createdDate: '15/08/2026',
     lastVisitDate: '25/10/2026',
+    assignedDoctor: 'BS. CKI Lê Thị Mai Chi',
     primaryDoctor: 'BS. CKI Lê Thị Mai Chi',
     primaryBranch: 'Hasaki Clinic Quận 3',
     
-    skinType: 'Da khô lão hóa & Nám sắc tố',
+    skinType: 'Da khô lão hóa & Nám sắc tố sâu',
     skinTypeCode: 'DRY_PIGMENTED_AGING',
     fitzpatrickType: 'Type III',
-    skinBarrierScore: 72,
-    moistureLevel: 36,
-    sebumLevel: 25,
-    pigmentationLevel: 75,
-    sensitivityLevel: 'Mức độ 2/5',
+    skinHealthScore: 74,
+    skinMetrics: {
+      hydration: 38,
+      oilLevel: 25,
+      pigmentation: 76,
+      sensitivity: 28
+    },
+    sensitivityLevel: 'Thấp (Da khỏe nhưng mỏng sừng và dễ sạm khi tiếp xúc nắng)',
     
     primaryConcerns: [
       'Nám mảng 2 bên gò má',
@@ -256,19 +425,44 @@ export const initialCustomerProfiles = [
       'Nếp nhăn li ti khóe mắt và rãnh cười',
       'Da khô sần, kém đều màu'
     ],
-    
-    currentRoutine: {
-      morning: ['Sữa rửa mặt dịu nhẹ Cetaphil', 'Serum Vitamin C Obagi 10%', 'Kem chống nắng MartiDerm The Originals'],
-      evening: ['Dầu tẩy trang Shu Uemura', 'Serum Tranexamic Acid mờ nám', 'Kem chống lão hóa Retinol 0.5% Skinceuticals']
-    },
+    goals: 'Làm mờ mảng nám chân sâu ít nhất 60-70%, xóa mờ rãnh nhăn nông và dưỡng da căng bóng tươi sáng.',
+    allergies: 'Dị ứng với Hydroquinone nồng độ > 4% (từng đỏ da). Cần ưu tiên hoạt chất Tranexamic Acid & Arbutin.',
+    doctorNotes: 'Vết nám mảng mờ rõ rệt khoảng 40% sau 4 buổi Laser Toning Pico kết hợp điện di Tranexamic Acid. Nền da ẩm mịn hơn. Tiếp tục duy trì chống nắng phổ rộng Mexoryl 400 và bổ sung viên uống chống oxy hóa.',
+    specialNotes: 'Khách hàng thường xuyên dẫn khách xem dự án ngoài trời. Dặn mang mũ rộng vành và thoa lại KCN sau mỗi 2.5 tiếng.',
+    lastUpdatedBy: 'BS. CKI Lê Thị Mai Chi',
+    lastUpdatedAt: '25/10/2026',
 
-    activeTreatmentPackage: {
-      name: 'Liệu trình Laser Toning sắc tố + Điện di tinh chất Tranexamic Acid mờ nám (6 buổi)',
+    activePackage: {
+      name: 'Liệu trình Laser Toning Sắc tố Pico + Điện di Tinh chất Tranexamic Acid mờ nám',
       totalSessions: 6,
-      completedSessions: 4,
+      currentSession: 4,
       progressPercentage: 66,
       nextSessionDate: '10/11/2026',
       clinic: 'Hasaki Clinic Quận 3'
+    },
+    activeTreatmentPackage: {
+      name: 'Liệu trình Laser Toning Sắc tố Pico + Điện di Tinh chất Tranexamic Acid mờ nám',
+      totalSessions: 6,
+      completedSessions: 4,
+      currentSession: 4,
+      progressPercentage: 66,
+      nextSessionDate: '10/11/2026',
+      clinic: 'Hasaki Clinic Quận 3'
+    },
+
+    currentRoutine: {
+      morning: [
+        'Sữa rửa mặt dịu nhẹ Cetaphil Gentle Skin Cleanser',
+        'Serum Vitamin C Obagi Professional-C 10%',
+        'Kem dưỡng ẩm chống lão hóa Olay Regenerist Collagen Peptide 24',
+        'Kem chống nắng MartiDerm The Originals Proteos Screen SPF 50+'
+      ],
+      evening: [
+        'Dầu tẩy trang Shu Uemura Ultime8 Sublime Beauty Cleansing Oil',
+        'Sữa rửa mặt Cetaphil',
+        'Serum Tranexamic Acid 5% MartiDerm Pigment Zero',
+        'Kem dưỡng Retinol 0.5% Skinceuticals (2 lần/tuần)'
+      ]
     },
 
     lifestyleFactors: {
@@ -279,73 +473,207 @@ export const initialCustomerProfiles = [
       makeupFrequency: 'Hàng ngày'
     },
 
-    allergiesAndPrecautions: ['Dị ứng với Hydroquinone nồng độ > 4%']
+    allergiesAndPrecautions: ['Dị ứng với Hydroquinone nồng độ > 4%'],
+
+    serviceHistory: [
+      {
+        id: 'SRV-HA-01',
+        serviceName: 'Laser Toning Pico xung cực ngắn phân rã sắc tố Melanin (Buổi 1)',
+        date: '15/08/2026',
+        branch: 'Hasaki Clinic Quận 3',
+        technician: 'KTV Trịnh Phương Linh',
+        doctorCheck: 'BS. CKI Lê Thị Mai Chi',
+        status: 'Hoàn thành',
+        outcome: 'Bắn laser phân giải hắc sắc tố, da hơi ửng hồng 30 phút sau dịu hoàn toàn'
+      },
+      {
+        id: 'SRV-HA-02',
+        serviceName: 'Điện di lạnh tinh chất Tranexamic Acid 5% + Mặt nạ mờ nám (Buổi 2)',
+        date: '01/09/2026',
+        branch: 'Hasaki Clinic Quận 3',
+        technician: 'KTV Nguyễn Thùy Trang',
+        doctorCheck: 'BS. CKI Lê Thị Mai Chi',
+        status: 'Hoàn thành',
+        outcome: 'Mảng nám bắt đầu nhạt màu 15%, da mềm ẩm mượt'
+      },
+      {
+        id: 'SRV-HA-03',
+        serviceName: 'Laser Toning Pico + Điện di Tế bào gốc thực vật (Buổi 3)',
+        date: '20/09/2026',
+        branch: 'Hasaki Clinic Quận 3',
+        technician: 'KTV Nguyễn Thùy Trang',
+        doctorCheck: 'BS. CKI Lê Thị Mai Chi',
+        status: 'Hoàn thành',
+        outcome: 'Mờ thêm 15% viền nám mảng, da đều màu hơn'
+      },
+      {
+        id: 'SRV-HA-04',
+        serviceName: 'Laser Toning Pico + Điện di Tinh chất Tranexamic Acid (Buổi 4)',
+        date: '25/10/2026',
+        branch: 'Hasaki Clinic Quận 3',
+        technician: 'KTV Trần Minh Tâm',
+        doctorCheck: 'BS. CKI Lê Thị Mai Chi',
+        status: 'Hoàn thành',
+        outcome: 'Đạt mờ 40% diện tích mảng nám, đốm tàn nhang mờ 60%'
+      }
+    ],
+
+    recommendedProducts: [
+      {
+        name: 'Serum Chống Oxy Hóa SkinCeuticals C E Ferulic (30ml)',
+        brand: 'SkinCeuticals',
+        price: '3.600.000₫',
+        purpose: 'Chống oxy hóa vượt trội, bảo vệ tế bào da chống lại tia cực tím và ô nhiễm',
+        clinicalReason: 'Công thức vàng 15% Pure Vitamin C + 1% Vitamin E + 0.5% Ferulic Acid tăng cường khả năng chống nắng gấp 8 lần.',
+        instructions: 'Thoa 4-5 giọt vào mỗi buổi sáng sau khi làm sạch và trước kem chống nắng.',
+        recommendedBy: 'BS. CKI Lê Thị Mai Chi (Clinic Q3)'
+      },
+      {
+        name: 'Kem Chống Nắng MartiDerm The Originals Proteos Screen SPF 50+ (50ml)',
+        brand: 'MartiDerm',
+        price: '520.000₫',
+        purpose: 'Ngăn ngừa nám sạm, bảo vệ da toàn diện trước tia UVA, UVB, ánh sáng xanh HEV',
+        clinicalReason: 'Phức hợp Spectrum Complex và Proteoglycans giữ ẩm sâu cho da khô lão hóa.',
+        instructions: 'Thoa đều toàn mặt và cổ trước khi ra nắng 20 phút. Dặm lại sau mỗi 2-3 tiếng.',
+        recommendedBy: 'BS. CKI Lê Thị Mai Chi (Clinic Q3)'
+      }
+    ]
   },
 
+  // =========================================================================
+  // 4. HỒ SƠ 4: LÊ MINH KHÔI - Sẹo rỗ đáy nhọn & Bóc tách đáy xơ tái tạo biểu bì
+  // =========================================================================
   {
     id: 'HSK-301928',
     customerCode: 'HSK-301928',
+    name: 'LÊ MINH KHÔI',
     fullName: 'LÊ MINH KHÔI',
     gender: 'Nam',
+    dob: '04/11/2001',
     birthDate: '04/11/2001',
     age: 25,
     phone: '0977 112 233',
     email: 'minhkhoi.le@gmail.com',
     cccd: '079201007812',
     country: 'Việt Nam',
-    job: 'Kiến trúc sư',
+    job: 'Kiến trúc sư thiết kế công trình',
+    occupation: 'Kiến trúc sư thiết kế công trình',
     address: '71 Hoàng Hoa Thám, Phường 13, Quận Tân Bình, TP. HCM',
-    avatar: '/images/doctor_nam.png',
+    avatar: '/images/scanned_face.png',
+    tier: 'Silver Member',
     membershipTier: 'Silver Member',
     rewardPoints: 850,
     createdDate: '05/10/2026',
     lastVisitDate: '22/10/2026',
+    assignedDoctor: 'BS. CKI Vũ Hoài Nam',
     primaryDoctor: 'BS. CKI Vũ Hoài Nam',
     primaryBranch: 'Hasaki Clinic Tân Bình',
     
-    skinType: 'Da hỗn hợp có sẹo rỗ sau mụn',
+    skinType: 'Da hỗn hợp thiên khô có sẹo rỗ sau mụn',
     skinTypeCode: 'COMBINATION_SCARRED',
     fitzpatrickType: 'Type IV',
-    skinBarrierScore: 60,
-    moistureLevel: 45,
-    sebumLevel: 65,
-    pigmentationLevel: 40,
-    sensitivityLevel: 'Mức độ 2/5',
+    skinHealthScore: 58,
+    skinMetrics: {
+      hydration: 44,
+      oilLevel: 62,
+      pigmentation: 42,
+      sensitivity: 48
+    },
+    sensitivityLevel: 'Trung bình (Đang trong giai đoạn nhạy cảm sau xâm lấn bóc tách sẹo)',
     
     primaryConcerns: [
-      'Sẹo rỗ đáy vuông (Boxcar) và đáy nhọn (Icepick) vùng 2 má',
-      'Bề mặt da gồ ghề, xơ cứng đáy sẹo',
-      'Vài nốt mụn viêm rải rác'
+      'Sẹo rỗ đáy nhọn (Icepick) & đáy vuông (Boxcar) vùng 2 bên má',
+      'Bề mặt da thô ráp xơ cứng mô sẹo',
+      'Vài nốt mụn viêm li ti rải rác'
     ],
-    
-    currentRoutine: {
-      morning: ['Sữa rửa mặt Cosrx Low pH', 'Kem chống nắng La Roche-Posay Anthelios'],
-      evening: ['Nước tẩy trang L\'Oreal', 'Sữa rửa mặt Cosrx', 'Gel phục hồi da Avene Cicalfate+']
-    },
+    goals: 'Làm đầy đáy sẹo rỗ 50-70%, làm phẳng mịn bề mặt da và thu nhỏ lỗ chân lông thô.',
+    allergies: 'Chưa ghi nhận tiền sử dị ứng thuốc; da nhạy cảm sau can thiệp thủ thuật vi điểm.',
+    doctorNotes: 'Vừa thực hiện bóc tách đáy sẹo (Subcision) buổi 1 kết hợp Laser vi điểm Fractional CO2. Vùng điều trị đang đóng mày vi điểm, đỏ nhẹ bình thường. Bắt buộc thoa kem tái tạo phục hồi EGF và kiêng nước lã trong 24h đầu.',
+    specialNotes: 'Không tự ý cạy mày mài vi điểm để tránh tăng sắc tố sau viêm (PIH). Bôi kem phục hồi tái tạo 3 lần/ngày.',
+    lastUpdatedBy: 'BS. CKI Vũ Hoài Nam',
+    lastUpdatedAt: '22/10/2026',
 
+    activePackage: {
+      name: 'Liệu trình Bóc tách đáy sẹo Subcision + Laser vi điểm Fractional CO2 Tái tạo da tầng sâu',
+      totalSessions: 4,
+      currentSession: 1,
+      progressPercentage: 25,
+      nextSessionDate: '20/11/2026',
+      clinic: 'Hasaki Clinic Tân Bình'
+    },
     activeTreatmentPackage: {
-      name: 'Liệu trình Bóc tách đáy sẹo + Laser vi điểm Fractional CO2 tái tạo da tầng sâu (4 buổi)',
+      name: 'Liệu trình Bóc tách đáy sẹo Subcision + Laser vi điểm Fractional CO2 Tái tạo da tầng sâu',
       totalSessions: 4,
       completedSessions: 1,
+      currentSession: 1,
       progressPercentage: 25,
       nextSessionDate: '20/11/2026',
       clinic: 'Hasaki Clinic Tân Bình'
     },
 
+    currentRoutine: {
+      morning: [
+        'Nước muối sinh lý 0.9% vệ sinh da nhẹ nhàng',
+        'Kem tái tạo da phục hồi Avene Cicalfate+ Restorative Protective Cream',
+        'Kem chống nắng vật lý Bioderma Photoderm Nude Touch SPF 50+'
+      ],
+      evening: [
+        'Nước tẩy trang dịu nhẹ Bioderma Sensibio H2O',
+        'Sữa rửa mặt tạo bọt dịu nhẹ Cosrx Low pH Good Morning Gel Cleanser',
+        'Serum Klairs Midnight Blue Youth Activating Drop',
+        'Kem dưỡng Avene Cicalfate+'
+      ]
+    },
+
     lifestyleFactors: {
       sleepHours: '6 tiếng / ngày',
       waterIntake: '1.5L / ngày',
-      stressLevel: 'Cao',
+      stressLevel: 'Cao (vẽ đồ án kiến trúc)',
       sunExposure: 'Trung bình',
       makeupFrequency: 'Không trang điểm'
     },
 
-    allergiesAndPrecautions: ['Chưa ghi nhận dị ứng']
+    allergiesAndPrecautions: ['Chưa ghi nhận dị ứng'],
+
+    serviceHistory: [
+      {
+        id: 'SRV-KHOI-01',
+        serviceName: 'Bóc tách đáy sẹo xơ cứng Subcision + Laser Fractional CO2 vi điểm',
+        date: '22/10/2026',
+        branch: 'Hasaki Clinic Tân Bình',
+        technician: 'KTV Trịnh Phương Linh',
+        doctorCheck: 'BS. CKI Vũ Hoài Nam',
+        status: 'Hoàn thành',
+        outcome: 'Giải phóng 25 nốt xơ sẹo co kéo đáy má, tạo vi tổn thương kích thích collagen tầng sâu, da hơi rát nhẹ được chườm lạnh ngay'
+      }
+    ],
+
+    recommendedProducts: [
+      {
+        name: 'Kem Dưỡng Tái Tạo Da Avene Cicalfate+ Restorative Protective Cream (40ml)',
+        brand: 'Avene',
+        price: '380.000₫',
+        purpose: 'Kích thích biểu mô hóa, kháng khuẩn và làm lành nhanh vết thương sau can thiệp sẹo',
+        clinicalReason: 'Hoạt chất sáng chế [C+-Restore] từ nước khoáng Avene kết hợp Đồng-Kẽm Sulfate bảo vệ da khỏi nhiễm trùng.',
+        instructions: 'Bôi 2-3 lần/ngày lên vùng da vừa điều trị sau khi đã rửa sạch bằng nước muối sinh lý.',
+        recommendedBy: 'BS. CKI Vũ Hoài Nam (Clinic Tân Bình)'
+      },
+      {
+        name: 'Serum Tế Bào Gốc Klairs Midnight Blue Youth Activating Drop (20ml)',
+        brand: 'Klairs',
+        price: '465.000₫',
+        purpose: 'Tăng sinh collagen và elastin, đẩy nhanh tốc độ đầy sẹo rỗ',
+        clinicalReason: 'Chứa EGF (yếu tố tăng trưởng biểu bì) và bFGF (yếu tố tăng trưởng nguyên bào sợi).',
+        instructions: 'Dùng 3-4 giọt thoa nhẹ khắp mặt vào mỗi tối trước kem tái tạo.',
+        recommendedBy: 'BS. CKI Vũ Hoài Nam (Clinic Tân Bình)'
+      }
+    ]
   }
 ];
 
-// Initial shared consultation records (Treatment history across Clinic & Retail)
+// Initial shared consultation records (Treatment history across Clinic & Retail for all 4 customers)
 export const initialConsultationRecords = [
+  // --- TRỊNH PHƯƠNG THẢO ---
   {
     id: 'consult-rec-04',
     customerId: 'HSK-221005',
@@ -353,53 +681,26 @@ export const initialConsultationRecords = [
     sessionNumber: 4,
     date: '30/10/2026',
     time: '09:30 - 10:45',
-    type: 'clinic', // 'clinic' | 'retail'
-    location: 'Hasaki Clinic & Spa Quận 7',
+    channel: 'clinic',
+    type: 'clinic',
+    service: 'Điện di tinh chất Arbutin mờ thâm & Tiêm vi điểm Meso HA đa tầng',
+    location: 'Hasaki Clinic Quận 7',
     room: 'Phòng Laser & Điều trị 1 - Lầu 1',
     staffId: 'emp_bs_chi',
     staffName: 'BS. CKI Lê Thị Mai Chi',
     staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
     handoverFrom: 'KTV Da liễu Nguyễn Thùy Linh',
     handoverNote: 'Đã bàn giao hồ sơ buổi 3 và theo dõi phục hồi hàng rào da cho BS. CKI Lê Thị Mai Chi tiếp nhận buổi 4.',
-    
-    initialCondition: 'Da sau 3 buổi đã giảm 92% mụn viêm, nền da sáng đều màu hơn rõ rệt. Vùng má còn lại một số vết thâm đỏ mờ (PIE) li ti, độ ẩm biểu bì đo đạt 65%.',
-    procedureDone: 'Tái khám định kỳ, vệ sinh sát khuẩn da Y khoa, điện di lạnh tinh chất Arbutin 2% mờ thâm và tiêm vi điểm Meso Cocktail HA đa tầng + B5 căng bóng phục hồi.',
-    afterCondition: 'Da hơi ửng hồng nhẹ sau vi điểm Meso, các nốt sẩn đỏ dịu nhanh sau khi đắp mặt nạ lạnh tế bào gốc thực vật 15 phút. Không có phản ứng kích ứng bất thường.',
-    doctorConclusions: 'Phác đồ đáp ứng xuất sắc (92% mục tiêu). Hàng rào bảo vệ da được củng cố vững chắc. Chỉ định duy trì chống nắng phổ rộng và dưỡng ẩm phục hồi ban đêm.',
-    
-    recommendedProducts: [
-      {
-        name: 'Kem dưỡng La Roche-Posay Cicaplast Baume B5+ (40ml)',
-        category: 'Phục hồi da',
-        reason: 'Chứa Madecassoside & Panthenol 5% giúp làm dịu tức thì các vết tiêm meso, củng cố màng lipid da.',
-        usage: 'Thoa sáng và tối sau bước serum, bôi lớp mỏng đều khắp mặt.'
-      },
-      {
-        name: 'Kem chống nắng La Roche-Posay Anthelios UVMune 400 Oil Control',
-        category: 'Bảo vệ da',
-        reason: 'Màng lọc Mexoryl 400 bảo vệ da tuyệt đối khỏi tia UVA bước sóng dài sau thủ thuật xâm lấn nhẹ.',
-        usage: 'Thoa trước khi ra ngoài 20 phút, dặm lại sau mỗi 3-4 tiếng.'
-      }
-    ],
-
-    recommendedServices: [
-      {
-        name: 'Buổi 5 (Tổng kết): Tái khám kiểm tra độ ẩm & Điện di tinh chất Collagen trẻ hóa da',
-        date: '15/11/2026',
-        clinic: 'Hasaki Clinic Quận 7'
-      }
-    ],
-
-    clientFeedback: {
-      submittedAt: '30/10/2026 15:45',
-      symptoms: 'Da sau tiêm meso có nốt nhỏ li ti nhưng đã lặn sau 4 tiếng, da cảm giác ẩm mượt và căng bóng rất ưng ý. Không ngứa hay châm chích.',
-      rating: 5,
-      doctorResponse: 'BS. Chi đã phản hồi: Tình trạng hoàn toàn bình thường em nhé, tiếp tục bôi B5 và chống nắng kỹ giúp bác sĩ.'
+    skinCondition: 'Da sau 3 buổi đã giảm 92% mụn viêm, nền da sáng đều màu hơn rõ rệt. Vùng má còn lại một số vết thâm đỏ mờ (PIE) li ti, độ ẩm biểu bì đo đạt 65%.',
+    diagnosis: 'Phục hồi màng lipid tốt, sạch mụn viêm, chuyển sang giai đoạn căng bóng và mờ thâm đỏ.',
+    recommendations: 'Phác đồ đáp ứng xuất sắc (92% mục tiêu). Hàng rào bảo vệ da được củng cố vững chắc. Chỉ định duy trì chống nắng Mexoryl 400 và kem dưỡng ẩm phục hồi ban đêm.',
+    metricsSnapshot: {
+      hydration: 62,
+      oil: 70,
+      sensitivity: 'Nhẹ / Ổn định'
     },
-
     status: 'completed'
   },
-
   {
     id: 'consult-rec-03',
     customerId: 'HSK-221005',
@@ -407,39 +708,26 @@ export const initialConsultationRecords = [
     sessionNumber: 3,
     date: '15/10/2026',
     time: '14:30 - 15:45',
+    channel: 'clinic',
     type: 'clinic',
-    location: 'Hasaki Clinic & Spa Quận 7',
+    service: 'Điện di lạnh Tế bào gốc phục hồi màng ẩm & Laser Toning 1064nm',
+    location: 'Hasaki Clinic Quận 7',
     room: 'Phòng Chăm sóc Công nghệ cao - Lầu 1',
     staffId: 'emp_ktv_linh',
     staffName: 'KTV Da liễu Nguyễn Thùy Linh',
     staffRole: 'Kỹ thuật viên Da liễu Chuyên sâu',
     handoverFrom: 'BS. CKI Vũ Hoài Nam',
     handoverNote: 'BS. CKI Vũ Hoài Nam chỉ định thực hiện điện di lạnh phục hồi màng ẩm và Laser Toning bước sóng 1064nm mờ thâm.',
-    
-    initialCondition: 'Tình trạng mụn viêm đã giảm 80%, cồi mụn ẩn gom khô. Vùng má còn thâm đỏ sau mụn (PIE), da hơi khô căng sau bước peel buổi trước.',
-    procedureDone: 'Xông hơi nano, lấy sạch nhân mụn vô khuẩn còn sót lại, bắn Laser Toning Q-Switched bước sóng 1064nm phân rã melanin và điện di lạnh tế bào gốc Skin Barrier.',
-    afterCondition: 'Bề mặt da mịn màng, các nốt thâm mờ đi thấy rõ, da ngậm nước căng bóng tự nhiên.',
-    doctorConclusions: 'Tiến độ phục hồi đạt 85%. Không xuất hiện mụn bùng phát. Bàn giao theo dõi buổi 4 với Bác sĩ Chi.',
-    
-    recommendedProducts: [
-      {
-        name: 'Serum Phục hồi Klairs Midnight Blue Youth Activating Drop',
-        category: 'Serum tế bào gốc',
-        reason: 'Chứa EGF và bFGF kích thích tái sinh tế bào mới, tăng sinh collagen sau laser.',
-        usage: 'Dùng 3-4 giọt mỗi tối trước bước kem dưỡng.'
-      }
-    ],
-
-    clientFeedback: {
-      submittedAt: '16/10/2026 09:20',
-      symptoms: 'Sau khi bắn laser toning về da êm dịu, không đỏ rát. Các vết thâm mờ nhanh hơn mong đợi.',
-      rating: 5,
-      doctorResponse: 'KTV Thùy Linh đã ghi nhận: Em duy trì routine hiện tại, tránh tẩy tế bào chết hạt trong 5 ngày tới.'
+    skinCondition: 'Tình trạng mụn viêm đã giảm 80%, cồi mụn ẩn gom khô. Vùng má còn thâm đỏ sau mụn (PIE), da hơi khô căng sau bước peel buổi trước.',
+    diagnosis: 'Mụn viêm xẹp hoàn toàn, da thiếu nước tầng sừng nhẹ.',
+    recommendations: 'Tiến độ phục hồi đạt 85%. Không xuất hiện mụn bùng phát. Bàn giao theo dõi buổi 4 với Bác sĩ Chi.',
+    metricsSnapshot: {
+      hydration: 55,
+      oil: 74,
+      sensitivity: 'Nhẹ'
     },
-
     status: 'completed'
   },
-
   {
     id: 'consult-rec-02',
     customerId: 'HSK-221005',
@@ -447,39 +735,24 @@ export const initialConsultationRecords = [
     sessionNumber: 2,
     date: '29/09/2026',
     time: '10:00 - 11:30',
+    channel: 'clinic',
     type: 'clinic',
-    location: 'Hasaki Clinic & Spa Quận 7',
+    service: 'Peel da sinh học BHA 20% giảm nhờn + Chiếu ánh sáng sinh học Blue Light',
+    location: 'Hasaki Clinic Quận 7',
     room: 'Phòng Điều trị Da 2 - Lầu 1',
     staffId: 'emp_bs_nam',
     staffName: 'BS. CKI Vũ Hoài Nam',
     staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
-    handoverFrom: null,
-    handoverNote: 'Bác sĩ tiếp tục điều trị liệu trình buổi 2.',
-    
-    initialCondition: 'Mụn viêm đã khô mài 60%, còn nhiều sợi bã nhờn cánh mũi và mụn ẩn dưới da vùng cằm.',
-    procedureDone: 'Peel da sinh học BHA 20% gom cồi mụn và thông thoáng nang lông, chiếu ánh sáng sinh học Blue Light 415nm diệt khuẩn P.Acnes.',
-    afterCondition: 'Da châm chích nhẹ trong 3 phút đầu peel, sau đó được trung hòa và làm mát dịu ngay bằng mặt nạ tràm trà sinh học.',
-    doctorConclusions: 'Peel thành công, cồi mụn gom tốt. Bắt buộc kiêng nắng kỹ 72h đầu.',
-    
-    recommendedProducts: [
-      {
-        name: 'Dung dịch tẩy da chết hóa học Paula\'s Choice BHA 2% Liquid (30ml)',
-        category: 'Tẩy tế bào chết',
-        reason: 'Làm sạch sâu cổ nang lông, ngăn mụn ẩn tái phát sau liệu trình.',
-        usage: 'Dùng cách ngày sau bước toner vào buổi tối.'
-      }
-    ],
-
-    clientFeedback: {
-      submittedAt: '30/09/2026 14:10',
-      symptoms: 'Da hơi khô căng nhẹ ở khóe miệng ngày thứ 2, bôi dưỡng ẩm B5 thấy êm ngay.',
-      rating: 5,
-      doctorResponse: 'BS. Nam đã phản hồi: Tình trạng bong tế bào sừng chết nhẹ là bình thường em nhé.'
+    skinCondition: 'Mụn viêm đã khô mài 60%, còn nhiều sợi bã nhờn cánh mũi và mụn ẩn dưới da vùng cằm.',
+    diagnosis: 'Bít tắc bã nhờn nang lông, vi khuẩn P.Acnes khu trú.',
+    recommendations: 'Peel thành công, cồi mụn gom tốt. Bắt buộc kiêng nắng kỹ 72h đầu.',
+    metricsSnapshot: {
+      hydration: 46,
+      oil: 80,
+      sensitivity: 'Trung bình'
     },
-
     status: 'completed'
   },
-
   {
     id: 'consult-rec-01',
     customerId: 'HSK-221005',
@@ -487,40 +760,24 @@ export const initialConsultationRecords = [
     sessionNumber: 1,
     date: '15/09/2026',
     time: '09:00 - 10:30',
+    channel: 'clinic',
     type: 'clinic',
-    location: 'Hasaki Clinic & Spa Quận 7',
+    service: 'Khám soi da VISIA đa tầng + Lấy nhân mụn Y khoa vô khuẩn',
+    location: 'Hasaki Clinic Quận 7',
     room: 'Phòng Khám Bác sĩ Da liễu 1 - Lầu 1',
     staffId: 'emp_bs_nam',
     staffName: 'BS. CKI Vũ Hoài Nam',
     staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
-    handoverFrom: null,
-    handoverNote: 'Khởi động liệu trình khám da chuyên sâu buổi đầu tiên.',
-    
-    initialCondition: 'Khám da ban đầu: Da dầu nhạy cảm, mụn viêm đỏ 2 bên má, mụn ẩn li ti trán và cằm, lỗ chân lông to, hàng rào bảo vệ da yếu do từng tự nặn mụn tại nhà sai cách.',
-    procedureDone: 'Soi da đa tầng máy VISIA, khám chẩn đoán bệnh lý da, lấy nhân mụn vô khuẩn chuẩn Y khoa 100%, sát khuẩn điện tím ozone, đắp mặt nạ bạc hà kháng khuẩn.',
-    afterCondition: 'Nền da thông thoáng, các ổ viêm được dẫn lưu mủ an toàn, không để lại vết thâm bầm.',
-    doctorConclusions: 'Chỉ định phác đồ 5 buổi kết hợp: Lấy nhân mụn -> Peel sinh học -> Laser Toning mờ thâm -> Meso HA căng bóng.',
-    
-    recommendedProducts: [
-      {
-        name: 'Sữa rửa mặt Cerave Foaming Facial Cleanser (473ml)',
-        category: 'Làm sạch dịu nhẹ',
-        reason: 'Chứa 3 Ceramides thiết yếu và Niacinamide giúp làm sạch dầu thừa mà không phá vỡ màng ẩm.',
-        usage: 'Dùng sáng và tối hàng ngày.'
-      }
-    ],
-
-    clientFeedback: {
-      submittedAt: '16/09/2026 08:00',
-      symptoms: 'Da nhẹ và sạch sâu, các nốt mụn viêm bớt nhức đỏ hẳn.',
-      rating: 5,
-      doctorResponse: 'BS. Nam: Tiếp tục giữ vệ sinh da mặt và uống đủ 2L nước mỗi ngày.'
+    skinCondition: 'Khám da ban đầu: Da dầu nhạy cảm, mụn viêm đỏ 2 bên má, mụn ẩn li ti trán và cằm, lỗ chân lông to, hàng rào bảo vệ da yếu do từng tự nặn mụn tại nhà sai cách.',
+    diagnosis: 'Mụn trứng cá sẩn viêm mức độ trung bình, tổn thương màng lipid.',
+    recommendations: 'Chỉ định phác đồ 5 buổi kết hợp: Lấy nhân mụn -> Peel sinh học -> Laser Toning mờ thâm -> Meso HA căng bóng.',
+    metricsSnapshot: {
+      hydration: 38,
+      oil: 88,
+      sensitivity: 'Cao (Dễ châm chích)'
     },
-
     status: 'completed'
   },
-
-  // Consultation at Retail Store (Cửa hàng bán lẻ)
   {
     id: 'consult-rec-retail-01',
     customerId: 'HSK-221005',
@@ -528,42 +785,121 @@ export const initialConsultationRecords = [
     sessionNumber: 0,
     date: '05/09/2026',
     time: '16:00 - 16:30',
-    type: 'retail', // Retail store consultation
+    channel: 'retail',
+    type: 'retail',
+    service: 'Tư vấn Chăm sóc Da & Soi da bã nhờn tại quầy',
     location: 'Hasaki Beauty & Store - 555 Đường 3 Tháng 2, Quận 10',
-    room: 'Quầy Tư vấn Chăm sóc Da & Dược Mỹ phẩm',
-    staffId: 'emp_ktv_linh',
     staffName: 'Nguyễn Thùy Linh',
     staffRole: 'Chuyên viên Tư vấn Da liễu Cửa hàng',
-    handoverFrom: null,
-    handoverNote: 'Khách hàng ghé mua mỹ phẩm và được đo độ ẩm da miễn phí tại máy soi da cầm tay của cửa hàng.',
-    
-    initialCondition: 'Khách hàng cảm thấy da hay bị đổ dầu vùng chữ T nhưng 2 bên má lại căng rát khó chịu sau khi rửa mặt. Khách đang dùng kem trộn không rõ nguồn gốc và có nhiều mụn ẩn sần sùi.',
-    procedureDone: 'Đo độ ẩm và bã nhờn bằng máy đo da cầm tay. Tư vấn dừng ngay kem trộn, hướng dẫn chu trình phục hồi da cơ bản 3 bước (Làm sạch - Phục hồi B5 - Chống nắng).',
-    afterCondition: 'Khách hiểu rõ tình trạng da, đồng ý ngưng kem trôi nổi và đăng ký lịch khám chuyên khoa với Bác sĩ Da liễu tại Hasaki Clinic Quận 7.',
-    doctorConclusions: 'Tư vấn viên Retail đề xuất chuyển tuyến sang Hasaki Clinic để Bác sĩ Da liễu thăm khám trực tiếp do tình trạng mụn viêm có dấu hiệu bội nhiễm nhẹ.',
-    
-    recommendedProducts: [
-      {
-        name: 'Nước tẩy trang Bioderma Sensibio H2O (500ml)',
-        category: 'Tẩy trang da nhạy cảm',
-        reason: 'Công nghệ hạt micelle nhẹ nhàng hút sạch bụi bẩn không cần rửa lại với nước, cực kỳ an toàn cho da mụn.',
-        usage: 'Thấm ra bông tẩy trang lau sạch mặt vào mỗi buổi tối.'
-      },
-      {
-        name: 'Kem dưỡng phục hồi da La Roche-Posay Cicaplast Baume B5+',
-        category: 'Phục hồi màng ẩm',
-        reason: 'Hỗ trợ tái tạo tế bào sau khi ngưng kem trộn gây mỏng yếu.',
-        usage: 'Bôi lớp mỏng 2 lần/ngày.'
-      }
-    ],
+    skinCondition: 'Khách hàng cảm thấy da hay bị đổ dầu vùng chữ T nhưng 2 bên má lại căng rát khó chịu sau khi rửa mặt.',
+    diagnosis: 'Da thiếu nước bù dầu nghiêm trọng, nghi ngờ tổn thương màng lipid.',
+    recommendations: 'Tư vấn viên Retail đề xuất chuyển tuyến sang Hasaki Clinic để Bác sĩ Da liễu thăm khám trực tiếp.',
+    status: 'completed'
+  },
 
-    clientFeedback: {
-      submittedAt: '05/09/2026 19:30',
-      symptoms: 'Tư vấn viên rất nhiệt tình và chu đáo, không chèo kéo mua sắm, giải thích cặn kẽ vì sao da bị kích ứng.',
-      rating: 5,
-      doctorResponse: 'Chuyên viên Linh: Cảm ơn bạn Thảo đã tin tưởng Hasaki!'
+  // --- NGUYỄN VĂN AN ---
+  {
+    id: 'consult-rec-an-01',
+    customerId: 'HSK-109283',
+    customerName: 'NGUYỄN VĂN AN',
+    sessionNumber: 1,
+    date: '28/10/2026',
+    time: '14:00 - 15:15',
+    channel: 'clinic',
+    type: 'clinic',
+    service: 'Lấy nhân mụn Y khoa vô khuẩn + Chiếu ánh sáng Blue Light diệt khuẩn',
+    location: 'Hasaki Clinic Quận 10',
+    room: 'Phòng Điều trị Mụn Vô khuẩn 2',
+    staffId: 'emp_bs_nam',
+    staffName: 'BS. CKI Vũ Hoài Nam',
+    staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
+    skinCondition: 'Tuyến bã nhờn hoạt động quá mức, nhiều mụn bọc sưng đỏ nóng rát vùng quai hàm, mụn đầu đen dày đặc cánh mũi.',
+    diagnosis: 'Mụn bọc nang (Cystic acne) mức độ trung bình-nặng do tăng tiết bã nhờn và nhiễm khuẩn.',
+    recommendations: 'Dẫn lưu an toàn 38 cồi mụn bọc. Kê toa bôi gel kháng khuẩn Klenzit C tối, rửa mặt La Roche-Posay Effaclar sáng tối. Hẹn tái khám sau 7 ngày.',
+    metricsSnapshot: {
+      hydration: 32,
+      oil: 92,
+      sensitivity: 'Trung bình'
     },
+    status: 'completed'
+  },
 
+  // --- TRẦN THU HÀ ---
+  {
+    id: 'consult-rec-ha-04',
+    customerId: 'HSK-204918',
+    customerName: 'TRẦN THU HÀ',
+    sessionNumber: 4,
+    date: '25/10/2026',
+    time: '10:30 - 11:45',
+    channel: 'clinic',
+    type: 'clinic',
+    service: 'Laser Toning Pico xung cực ngắn + Điện di tinh chất Tranexamic Acid mờ nám',
+    location: 'Hasaki Clinic Quận 3',
+    room: 'Phòng Laser Công nghệ cao 1',
+    staffId: 'emp_bs_chi',
+    staffName: 'BS. CKI Lê Thị Mai Chi',
+    staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
+    skinCondition: 'Mảng nám 2 bên gò má đã mờ 40%, các đốm tàn nhang nhạt màu rõ. Nền da sáng mịn hơn, không xuất hiện hiện tượng tăng sắc tố sau viêm (PIH).',
+    diagnosis: 'Nám mảng nông đáp ứng laser pico rất khả quan, cấu trúc da cải thiện.',
+    recommendations: 'Tiếp tục duy trì điện di Tranexamic Acid nồng độ 5%. Dặn khách duy trì thoa kem chống nắng MartiDerm Proteos Screen sau mỗi 3 giờ.',
+    metricsSnapshot: {
+      hydration: 52,
+      oil: 28,
+      sensitivity: 'Ổn định'
+    },
+    status: 'completed'
+  },
+  {
+    id: 'consult-rec-ha-01',
+    customerId: 'HSK-204918',
+    customerName: 'TRẦN THU HÀ',
+    sessionNumber: 1,
+    date: '15/08/2026',
+    time: '09:30 - 10:45',
+    channel: 'clinic',
+    type: 'clinic',
+    service: 'Thăm khám soi da VISIA sắc tố + Laser Toning Pico buổi đầu tiên',
+    location: 'Hasaki Clinic Quận 3',
+    room: 'Phòng Laser Công nghệ cao 1',
+    staffId: 'emp_bs_chi',
+    staffName: 'BS. CKI Lê Thị Mai Chi',
+    staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
+    skinCondition: 'Nám mảng đối xứng 2 bên gò má, tàn nhang rải rác vùng sống mũi, nếp nhăn li ti khóe mắt và da khô sần.',
+    diagnosis: 'Nám hỗn hợp (Melasma) kết hợp lão hóa da do ánh sáng mặt trời.',
+    recommendations: 'Lên phác đồ 6 buổi Laser Toning Pico + Điện di tinh chất chống nám Tranexamic Acid. Khuyến cáo không dùng kem lột tẩy Hydroquinone nồng độ cao.',
+    metricsSnapshot: {
+      hydration: 38,
+      oil: 25,
+      sensitivity: 'Thấp'
+    },
+    status: 'completed'
+  },
+
+  // --- LÊ MINH KHÔI ---
+  {
+    id: 'consult-rec-khoi-01',
+    customerId: 'HSK-301928',
+    customerName: 'LÊ MINH KHÔI',
+    sessionNumber: 1,
+    date: '22/10/2026',
+    time: '15:00 - 16:30',
+    channel: 'clinic',
+    type: 'clinic',
+    service: 'Bóc tách đáy sẹo Subcision + Laser vi điểm Fractional CO2 tái tạo da',
+    location: 'Hasaki Clinic Tân Bình',
+    room: 'Phòng Thủ thuật Vô trùng 1',
+    staffId: 'emp_bs_nam',
+    staffName: 'BS. CKI Vũ Hoài Nam',
+    staffRole: 'Bác sĩ Chuyên khoa I Da liễu',
+    skinCondition: 'Sẹo rỗ hỗn hợp (Icepick và Boxcar) vùng 2 bên má, đáy sẹo có mô xơ co kéo làm bề mặt gồ ghề.',
+    diagnosis: 'Sẹo rỗ sau mụn trứng cá mức độ 3, đáy sẹo xơ cứng cần bóc tách cơ học.',
+    recommendations: 'Bóc tách cắt đứt 25 điểm xơ sẹo, bắn laser Fractional CO2 vi điểm kích thích tăng sinh collagen. Bắt buộc kiêng nước 24h, bôi kem tái tạo Avene Cicalfate+ liên tục 5 ngày.',
+    metricsSnapshot: {
+      hydration: 44,
+      oil: 62,
+      sensitivity: 'Trung bình (Đang đỏ vi điểm sau laser)'
+    },
     status: 'completed'
   }
 ];

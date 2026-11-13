@@ -105,11 +105,17 @@ export default function App() {
     }
   });
 
-  // Persistent Customer Profiles (Shared with Employee Portal)
+  // Persistent Customer Profiles (Shared with Employee Portal - 4 Simulated Profiles)
   const [customerProfiles, setCustomerProfiles] = useState(() => {
     try {
       const saved = localStorage.getItem('hasaki_customer_profiles');
-      return saved ? JSON.parse(saved) : initialCustomerProfiles;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 4 && parsed[0]?.name && parsed[1]?.name) {
+          return parsed;
+        }
+      }
+      return initialCustomerProfiles;
     } catch {
       return initialCustomerProfiles;
     }
@@ -119,7 +125,13 @@ export default function App() {
   const [consultationRecords, setConsultationRecords] = useState(() => {
     try {
       const saved = localStorage.getItem('hasaki_consultation_records');
-      return saved ? JSON.parse(saved) : initialConsultationRecords;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 4) {
+          return parsed;
+        }
+      }
+      return initialConsultationRecords;
     } catch {
       return initialConsultationRecords;
     }
